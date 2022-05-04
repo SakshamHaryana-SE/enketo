@@ -21,6 +21,7 @@
                         <trade/>
                         <batch/>
                         <industry/>
+                        <ojt_month>1</ojt_month>
                         <pf_name>Test</pf_name>
                         <pf_iti>Test</pf_iti>
                         <pf_trade>Test</pf_trade>
@@ -29,10 +30,13 @@
                         <details/>
                         <go_back/>
                     </group_details>
-                    <attendance>
+                    <attendance_no>
+                        <attendance_no_note/>
+                    </attendance_no>
+                    <attendance_yes>
                         <attendance_note/>
                         <attendance_status/>
-                    </attendance>
+                    </attendance_yes>
                     <absence_reason>
                         <absence_rsn/>
                         <if_other/>
@@ -63,6 +67,7 @@
             <bind nodeset="/data/group_details/trade" type="string"/>
             <bind nodeset="/data/group_details/batch" type="string"/>
             <bind nodeset="/data/group_details/industry" type="string"/>
+            <bind nodeset="/data/group_details/ojt_month" type="string"/>
             <bind nodeset="/data/group_details/pf_name" readonly="true()" type="string"/>
             <bind nodeset="/data/group_details/pf_iti" readonly="true()" type="string"/>
             <bind nodeset="/data/group_details/pf_trade" readonly="true()" type="string"/>
@@ -71,28 +76,32 @@
             <bind nodeset="/data/group_details/details" required="true()" type="string"/>
             <bind nodeset="/data/group_details/go_back" readonly="true()"
                   relevant=" /data/group_details/details  = 'No'" type="string"/>
-            <bind nodeset="/data/attendance" relevant=" /data/group_details/details  = 'Yes'"/>
-            <bind nodeset="/data/attendance/attendance_note" readonly="true()" type="string"/>
-            <bind nodeset="/data/attendance/attendance_status" required="true()" type="string"/>
-            <bind nodeset="/data/absence_reason" relevant=" /data/attendance/attendance_status  = 'Absent'"/>
+            <bind nodeset="/data/attendance_no"
+                  relevant="selected( /data/group_details/details , 'Yes') and  /data/group_details/ojt_month =0"/>
+            <bind nodeset="/data/attendance_no/attendance_no_note" readonly="true()" type="string"/>
+            <bind nodeset="/data/attendance_yes"
+                  relevant="selected( /data/group_details/details , 'Yes') and  /data/group_details/ojt_month =1"/>
+            <bind nodeset="/data/attendance_yes/attendance_note" readonly="true()" type="string"/>
+            <bind nodeset="/data/attendance_yes/attendance_status" required="true()" type="string"/>
+            <bind nodeset="/data/absence_reason" relevant=" /data/attendance_yes/attendance_status  = 'Absent'"/>
             <bind nodeset="/data/absence_reason/absence_rsn" required="true()" type="string"/>
             <bind nodeset="/data/absence_reason/if_other" relevant=" /data/absence_reason/absence_rsn  = '6'"
                   required="true()" type="string"/>
-            <bind nodeset="/data/location" relevant=" /data/attendance/attendance_status  ='Present'"/>
-            <bind constraint="selected-at( /data/location/trainee_location , 3) &lt; 100"
+            <bind nodeset="/data/location" relevant=" /data/attendance_yes/attendance_status  ='Present'"/>
+            <bind constraint="selected-at( /data/location/trainee_location , 3) &lt; 500"
                   nodeset="/data/location/trainee_location" required="true()" type="geopoint"/>
             <bind nodeset="/data/location/ind_geopoint" type="string"/>
             <bind calculate="concat( /data/location/ind_geopoint , ';' ,  /data/location/trainee_location )"
                   nodeset="/data/location/geotrace" type="string"/>
             <bind calculate="distance( /data/location/geotrace )" nodeset="/data/location/distance" type="string"/>
             <bind nodeset="/data/location_mismatch"
-                  relevant="selected( /data/attendance/attendance_status , 'Present') and  /data/location/distance &gt;500"/>
+                  relevant="selected( /data/attendance_yes/attendance_status , 'Present') and  /data/location/distance &gt;500"/>
             <bind nodeset="/data/location_mismatch/location_note" readonly="true()" type="string"/>
             <bind nodeset="/data/selfie"
-                  relevant="selected( /data/attendance/attendance_status , 'Present') and  /data/location/distance &lt;501"/>
+                  relevant="selected( /data/attendance_yes/attendance_status , 'Present') and  /data/location/distance &lt;501"/>
             <bind nodeset="/data/selfie/selfie" orx:max-pixels="1024" required="true()" type="binary"/>
             <bind nodeset="/data/form_end"
-                  relevant="selected( /data/attendance/attendance_status , 'Present') and  /data/location/distance &lt;501"/>
+                  relevant="selected( /data/attendance_yes/attendance_status , 'Present') and  /data/location/distance &lt;501"/>
             <bind nodeset="/data/form_end/image" readonly="true()" type="string"/>
             <bind nodeset="/data/form_end/note_end" readonly="true()" type="string"/>
             <bind jr:preload="uid" nodeset="/data/meta/instanceID" readonly="true()" type="string"/>
@@ -135,8 +144,13 @@
                 </label>
             </input>
         </group>
-        <group appearance="field-list" ref="/data/attendance">
-            <input ref="/data/attendance/attendance_note">
+        <group appearance="field-list" ref="/data/attendance_no">
+            <input ref="/data/attendance_no/attendance_no_note">
+                <label>Trainee schedule does not match with the Industry Schedule</label>
+            </input>
+        </group>
+        <group appearance="field-list" ref="/data/attendance_yes">
+            <input ref="/data/attendance_yes/attendance_note">
                 <label>Hello Trainee,
                     Please make sure you are in the industry premises while marking attendance using your device. Else,
                     your attendance will not get recorded
@@ -144,7 +158,7 @@
                     तो आपकी attendance दर्ज नहीं होगी।
                 </label>
             </input>
-            <select1 ref="/data/attendance/attendance_status">
+            <select1 ref="/data/attendance_yes/attendance_status">
                 <label>Mark Attendance</label>
                 <item>
                     <label>Present</label>
@@ -193,7 +207,7 @@
             </input>
         </group>
         <group appearance="field-list" ref="/data/location">
-            <input accuracyThreshold="500" ref="/data/location/trainee_location">
+            <input accuracyThreshold="100" ref="/data/location/trainee_location">
                 <label>Your location</label>
             </input>
         </group>

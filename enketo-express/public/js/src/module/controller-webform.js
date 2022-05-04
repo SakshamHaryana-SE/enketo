@@ -343,6 +343,7 @@ function _loadRecord( instanceId, confirmed ) {
             prefilledSubmissionId = result.prefilledSubmissionId
             isAttendanceSubmit = result.isAttendanceSubmit
             isDetailCorrect = result.traineeDetailStatus
+            console.log('isDetailCorrect', isDetailCorrect);
             if ( result.failedFiles && result.failedFiles.length > 0 ) {
                 msg = `${t( 'alert.submissionerror.fnfmsg', {
                     failedFiles: result.failedFiles.join( ', ' ),
@@ -383,19 +384,24 @@ function _loadRecord( instanceId, confirmed ) {
                 }, 1200 );
             } else if (!isValid && isValid !== undefined) {
                 gui.alert( "Trainee doesn't exists!", t( 'alert.submissionerror.heading' ) );
-            } else if (!isIndustry && isIndustry !== undefined) {
-                if(prefilledSubmissionId === 'preFilled') {
-                    gui.alert( "Trainee schedule doesn't match with the mapped industry schedule.", t( 'alert.submissionerror.heading' ) );
-                }
-            } else if(isDetailCorrect) {
-                gui.alert( "", t( 'alert.submissionerror.heading' ) );
-            } else if (isAttendanceSubmit) {
+            } else if(!isDetailCorrect && isIndustry !== undefined) {
                 gui.alert( "Your details are incorrect! Please enter valid detail.", t( 'alert.submissionerror.heading' ) );
                 const message = JSON.stringify({
                     isEnrl: true,
                     channel: 'traineeDetail'
                 });
                 window.parent.postMessage(message, '*');
+            } else if (!isIndustry && isIndustry !== undefined) {
+                if(prefilledSubmissionId === 'preFilled') {
+                    gui.alert( "Trainee schedule doesn't match with the mapped industry schedule.", t( 'alert.submissionerror.heading' ) );
+                    const message = JSON.stringify({
+                        isEnrl: true,
+                        channel: 'traineeDetail'
+                    });
+                    window.parent.postMessage(message, '*');
+                }
+            }  else if (isAttendanceSubmit) {
+                gui.alert( "You’ve already marked your attendance for the day.", t( 'alert.submissionerror.heading' ) );
             } else {
                 msg = ( msg.length > 0 ) ? msg : t( 'alert.submissionsuccess.msg' );
                 gui.alert( msg, t( 'alert.submissionsuccess.heading' ), level );
