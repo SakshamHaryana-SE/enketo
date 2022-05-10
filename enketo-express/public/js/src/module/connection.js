@@ -13,6 +13,7 @@ import {
     setLastSavedRecord,
 } from './last-saved';
 import gui from "./gui";
+import {fromDer} from "node-forge/lib/asn1";
 const bc = new BroadcastChannel('test_channel');
 
 /**
@@ -70,6 +71,9 @@ const HEADERS = {
     'Authorization':`Bearer ${HASURA_ADMIN_SECRET}`,
     'Content-Type':'application/json',
 }
+const API_URL = settings.apiUrl;
+const HTTP_BASIC_USER = settings.httpBasicUser;
+const HTTP_BASIC_PASS = settings.httpBasicPass;
 
 
 /**
@@ -116,6 +120,7 @@ function _uploadRecord( record ) {
     // Add aatendance
     // Get form data
     let attendanceStatus = false;
+    let locationDetail = false;
     let traineeDetailStatus = false;
     let parserString = new DOMParser();
     let document = parserString.parseFromString(record.xml, 'text/xml');
@@ -127,6 +132,14 @@ function _uploadRecord( record ) {
                 traineeDetailStatus = false
             } else {
                 traineeDetailStatus = true
+            }
+        }
+        let location = doc.getElementsByTagName("distance");
+        if(location.length !== 0) {
+            if(location[0].textContent > 500) {
+                locationDetail = false;
+            } else {
+                locationDetail = true;
             }
         }
         let attendance = doc.getElementsByTagName("attendance_status");
@@ -151,7 +164,7 @@ function _uploadRecord( record ) {
     // a serious issue with ODK Aggregate (https://github.com/kobotoolbox/enketo-express/issues/400)
     return batches.reduce( ( prevPromise, batch ) => {
         return prevPromise.then( results => {
-            return _uploadBatch( batch, formData, attendanceStatus, traineeDetailStatus ).then( result => {
+            return _uploadBatch( batch, formData, attendanceStatus, traineeDetailStatus, locationDetail ).then( result => {
                 results.push( result );
 
                 return results;
@@ -180,7 +193,20 @@ const uploadRecord = ( survey, record ) => (
  * @return { Promise<UploadBatchResult> }      [description]
  */
 
-function _uploadBatch( recordBatch, formData, attendanceStatus, traineeDetailStatus ) {
+// CONVERT OBJECT TO QUERY STRING
+function queryString (obj) {
+    const str = [];
+    // eslint-disable-next-line no-restricted-syntax
+    for (const p in obj) {
+        // eslint-disable-next-line no-prototype-builtins
+        if (obj.hasOwnProperty(p)) {
+            str.push(`${encodeURIComponent(p)}=${encodeURIComponent(obj[p])}`);
+        }
+    }
+    return str.join('&');
+};
+
+function _uploadBatch( recordBatch, formData, attendanceStatus, traineeDetailStatus, locationDetail ) {
     // Submission URL is dynamic, because settings.submissionParameter only gets populated after loading form from
     // cache in offline mode.
    // const xmlResponse = parser.parseFromString(form.getDataStr( include ), 'text/xml' );
@@ -206,25 +232,50 @@ function _uploadBatch( recordBatch, formData, attendanceStatus, traineeDetailSta
             body: JSON.stringify(formData)
         } )
             .then( async response => {
-                const resData = await response.json();
-                if(resData.trainee.length > 0) {
-                    traineeData = resData.trainee[0];
-                    const message = JSON.stringify({
-                        message: resData.trainee[0],
-                        date: Date.now(),
-                        channel: 'enketo'
-                    });
-                    localStorage.setItem("industryId", resData.trainee[0].industry);
-                    localStorage.setItem("traineeId", resData.trainee[0].id);
-                    window.parent.postMessage(message, '*');
-                }
 
+                const resData = await response.json();
                 /** @type { UploadBatchResult } */
                 let result = {
                     status: response.status,
                     failedFiles: ( recordBatch.failedFiles ) ? recordBatch.failedFiles : undefined,
                     isValid: resData.trainee.length > 0
                 };
+                if(resData.trainee.length > 0) {
+                    traineeData = resData.trainee[0];
+                    // Call login or register api for trainee
+                    const traineeParams = {
+                        id: formData.registrationNumber,
+                        dob: formData.dob
+                    }
+                    const traineeLoginUrl = `${API_URL}/dst/trainee/loginOrRegister?${await queryString(traineeParams)}`;
+                    const traineeLoginRes = await fetch(traineeLoginUrl, {
+                        method: 'GET',
+                        cache: 'no-cache',
+                        headers:  {
+                            'Authorization':`Basic ${window.btoa(unescape(encodeURIComponent( `${HTTP_BASIC_USER}:${HTTP_BASIC_PASS}` )))}`,
+                            'Content-Type':'application/json',
+                        },
+                    });
+                    const responseOfTrainee = await traineeLoginRes.json();
+                    const { resp: { params: { status, errMsg } } } = responseOfTrainee;
+                    if (status === 'Success') {
+                        const message = JSON.stringify({
+                            message: resData.trainee[0],
+                            loginRes: responseOfTrainee,
+                            date: Date.now(),
+                            channel: 'enketo'
+                        });
+                        result.isTraineeLogin = true;
+                        localStorage.setItem("industryId", resData.trainee[0].industry);
+                        localStorage.setItem("traineeId", resData.trainee[0].id);
+                        window.parent.postMessage(message, '*');
+                    } else {
+                        result.isTraineeLogin = false;
+                        result.errorMsg = errMsg;
+                    }
+                }
+
+
                 if ( response.status === 400 ){
                     // 400 is a generic error. Any message returned by the server is probably more useful.
                     // Other more specific statusCodes will get hardcoded and translated messages.
@@ -277,7 +328,8 @@ function _uploadBatch( recordBatch, formData, attendanceStatus, traineeDetailSta
                     failedFiles: ( recordBatch.failedFiles ) ? recordBatch.failedFiles : undefined,
                     isIndustry: resData.schedule.length !== 0 ? resData.schedule[0].is_industry : false,
                     prefilledSubmissionId,
-                    traineeDetailStatus
+                    traineeDetailStatus,
+                    locationDetail
                 };
 
                 // Attendance submit

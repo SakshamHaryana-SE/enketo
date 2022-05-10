@@ -331,7 +331,10 @@ module.exports = {
         swipePage: config[ 'swipe page' ],
         textMaxChars: config[ 'text field character limit' ],
         hasuraEndPoint: config[ 'hasura-end-point' ],
-        hasuraAdminSecret: config [ 'hasura-admin-secret' ]
+        hasuraAdminSecret: config [ 'hasura-admin-secret' ],
+        apiUrl: config [ 'api-url' ],
+        httpBasicUser: config [ 'http-basic-user' ],
+        httpBasicPass: config [ 'http-basic-pass' ],
     },
     getThemesSupported
 };
