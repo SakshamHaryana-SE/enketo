@@ -77,7 +77,7 @@
         "puppeteer": "^10.2.0",
         "redis": "^3.1.2",
         "request": "^2.88.2",
-        "request-filtering-agent": "^1.0.7",        
+        "request-filtering-agent": "^1.0.7",
         "serve-favicon": "^2.5.0",
         "time-grunt": "^2.0.0",
         "valid-url": "^1.0.9",

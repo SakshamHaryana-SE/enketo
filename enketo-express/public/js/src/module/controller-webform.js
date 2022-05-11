@@ -248,7 +248,7 @@ function _loadRecord( instanceId, confirmed ) {
                 }
 
                 const formEl = form.resetView();
-                console.log("FORM-XML", record.xml);
+                console.log( "FORM-XML", record.xml );
                 form = new Form( formEl, {
                     modelStr: formData.modelStr,
                     instanceStr: record.xml,
@@ -295,9 +295,6 @@ function _submitRecord( survey ) {
     let msg = '';
     const include = { irrelevant: false };
 
-    console.log("FORM", form);
-    console.log("FORMDATA", formData.modelStr);
-    console.log("XML", form.getDataStr( include ));
     form.view.html.dispatchEvent( events.BeforeSave() );
 
     beforeMsg = ( redirect ) ? t( 'alert.submission.redirectmsg' ) : '';
@@ -330,7 +327,7 @@ function _submitRecord( survey ) {
         .then( record => connection.uploadRecord( survey, record ) )
         .then( result => {
             result = result || {};
-            level = 'success';
+            level = result.status || 'success';
 
             if ( result.failedFiles && result.failedFiles.length > 0 ) {
                 msg = `${t( 'alert.submissionerror.fnfmsg', {
@@ -339,10 +336,20 @@ function _submitRecord( survey ) {
                 } )}<br/>`;
                 level = 'warning';
             }
+            msg = result.message;
         } )
         .then( () => {
             // this event is used in communicating back to iframe parent window
             document.dispatchEvent( events.SubmissionSuccess() );
+
+            let heading = '';
+            if( level === 'success' ){
+                heading = t( 'alert.submissionsuccess.heading' );
+            }else if( level === 'warning' ){
+                heading = t( 'alert.submissionwarning.heading' );
+            }else{
+                heading = t( 'alert.submissionerror.heading' );
+            }
 
             if ( redirect ) {
                 if ( !settings.multipleAllowed ) {
@@ -366,33 +373,35 @@ function _submitRecord( survey ) {
                     d.setTime( d.getTime() + age * 1000 );
                     document.cookie = `${settings.enketoId}=${now.getTime()};path=${settings.basePath}/single;max-age=${age};expires=${d.toGMTString()};`;
                 }
-                msg += t( 'alert.submissionsuccess.redirectmsg' );
-                gui.alert( msg, t( 'alert.submissionsuccess.heading' ), level );
+                // msg += t( 'alert.submissionsuccess.redirectmsg' );
+                
+
+                gui.alert( msg, heading, level );
                 setTimeout( () => {
                     location.href = decodeURIComponent( settings.returnUrl || settings.defaultReturnUrl );
                 }, 1200 );
             } else {
-                msg = ( msg.length > 0 ) ? msg : t( 'alert.submissionsuccess.msg' );
-                gui.alert( msg, t( 'alert.submissionsuccess.heading' ), level );
+                //msg = ( msg.length > 0 ) ? msg : t( 'alert.submissionsuccess.msg' );
+                gui.alert( msg, heading, level );
                 _resetForm( survey );
             }
         } )
         .catch( result => {
-            let message;
-            result = result || {};
-            console.error( 'submission failed', result );
-            if ( result.status === 401 ) {
-                message = t( 'alert.submissionerror.authrequiredmsg', {
-                    here: authLink,
-                    // switch off escaping just for this known safe value
-                    interpolation: {
-                        escapeValue: false
-                    }
-                } );
-            } else {
-                message = result.message || gui.getErrorResponseMsg( result.status );
-            }
-            gui.alert( message, t( 'alert.submissionerror.heading' ) );
+            // let message;
+            // result = result || {};
+            gui.alert( msg, t( 'alert.submissionerror.heading' ), level );
+            // if ( result.status === 401 ) {
+            //     message = t( 'alert.submissionerror.authrequiredmsg', {
+            //         here: authLink,
+            //         // switch off escaping just for this known safe value
+            //         interpolation: {
+            //             escapeValue: false
+            //         }
+            //     } );
+            // } else {
+            //     message = result.message || gui.getErrorResponseMsg( result.status );
+            // }
+            // gui.alert( message, t( 'alert.submissionerror.heading' ) );
         } );
 }
 

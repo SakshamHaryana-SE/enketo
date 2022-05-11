@@ -1,0 +1,27 @@
+{
+  "name": "enketo",
+  "version": "1.0.0",
+  "description": "Enketo",
+  "scripts": {
+    "start-redis-cache": "docker run --name enketo-redis-cache -p 6380:6379 -d redis",
+    "start-redis-main": "docker run --name enketo-redis-main -p 6379:6379 -d redis",
+    "start-ec": "cd enketo-core && npm start",
+    "start-ee": "cd enketo-express && grunt develop",
+    "start-fs": "cd forms && source venv/bin/activate && python3 app.py",
+    "start-static": "cd form-server/static/forms && python3 -m http.server",
+    "start-web": "cd wrapper && npm start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ChakshuGautam/enketo.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ChakshuGautam/enketo/issues"
+  },
+  "homepage": "https://github.com/ChakshuGautam/enketo#readme",
+  "dependencies": {
+    "xmldom": "^0.6.0"
+  }
+}
