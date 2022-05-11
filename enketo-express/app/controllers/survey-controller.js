@@ -200,7 +200,6 @@ function _renderWebform(req, res, next, options) {
     console.log(JSON.stringify(req.query));
     options.formId = req?.query?.id;
     options.backendToken = req?.query?.token;
-    options.formSpec = req?.query?.formSpec;
 
     res.cookie("backendToken", req?.query?.token, cookieOptions);
     res.cookie("enketoFormId", req?.query?.id, cookieOptions);
