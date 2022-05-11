@@ -1,0 +1,70 @@
+{
+    "name": "enketo-transformer",
+    "version": "2.0.0",
+    "description": "Library/app that transforms ODK-compliant XForms into a format that Enketo can consume",
+    "license": "Apache-2.0",
+    "main": "src/transformer.js",
+    "bugs": {
+        "url": "https://github.com/enketo/enketo-transformer/issues",
+        "email": "martijn@enketo.org"
+    },
+    "author": {
+        "name": "Martijn van de Rijdt",
+        "email": "martijn@enketo.org",
+        "url": "https://www.linkedin.com/in/martijnvanderijdt"
+    },
+    "engines": {
+        "node": ">=14 <17",
+        "npm": ">=6 <7"
+    },
+    "contributors": [],
+    "scripts": {
+        "start": "node app.js",
+        "eslint-check": "eslint app.js src/**/*.js test/**/*.js",
+        "eslint-fix": "eslint app.js src/**/*.js test/**/*.js --fix",
+        "test": "nyc mocha test/*.spec.js --timeout 6000 && npm run eslint-check && node update-readme-with-shield-badge.js",
+        "test:watch": "nodemon --exec 'mocha test/*.spec.js --timeout 6000000' --watch src --watch test --ext js,xml,xsl",
+        "build-docs": "rimraf docs && ./node_modules/.bin/jsdoc -c jsdoc.config.js",
+        "develop": "DEBUG=api,transformer,markdown,language node app.js & http-server test/forms -p 8081"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/enketo/enketo-transformer.git"
+    },
+    "keywords": [
+        "Enketo",
+        "ODK",
+        "OpenRosa",
+        "XSLT",
+        "XSL",
+        "Transformer"
+    ],
+    "dependencies": {
+        "body-parser": "1.19.x",
+        "express": "^5.0.0-alpha.8",
+        "language-tags": "1.0.5",
+        "libxslt": "0.10.0",
+        "request": "^2.88.2",
+        "string-direction": "0.1.x"
+    },
+    "devDependencies": {
+        "chai": "^4.3.4",
+        "chai-as-promised": "^7.1.1",
+        "docdash": "^1.2.0",
+        "eslint": "^7.32.0",
+        "eslint-plugin-jsdoc": "^36.0.8",
+        "grunt": "^1.4.1",
+        "http-server": "^13.0.1",
+        "istanbul-reporter-shield-badge": "^1.2.1",
+        "jsdoc": "^3.6.7",
+        "mocha": "^9.1.1",
+        "nodemon": "^2.0.12",
+        "nyc": "^15.1.0",
+        "rimraf": "^3.0.2",
+        "@xmldom/xmldom": "^0.7.4"
+    },
+    "volta": {
+        "node": "16.5.0",
+        "npm": "6.14.13"
+    }
+}

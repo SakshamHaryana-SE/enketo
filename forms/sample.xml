@@ -1,0 +1,1591 @@
+<?xml version="1.0"?>
+<h:html xmlns="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:jr="http://openrosa.org/javarosa" xmlns:odk="http://www.opendatakit.org/xforms" xmlns:orx="http://openrosa.org/xforms" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <h:head>
+        <!-- ODK Aggregate upload time: 2021-03-11T05:17:29.389Z on http://159.65.158.131:8080 -->
+        <h:title>Incubation Center Visit</h:title>
+        <model odk:xforms-version="1.0.0">
+            <itext>
+                <translation lang="English">
+                    <text id="/data/officer_details:label">
+                        <value>User Details</value>
+                    </text>
+                    <text id="/data/officer_details/user_name:label">
+                        <value>Username</value>
+                    </text>
+                    <text id="/data/officer_details/designation:label">
+                        <value>Designation</value>
+                    </text>
+                    <text id="/data/officer_details/name:label">
+                        <value>Name</value>
+                    </text>
+                    <text id="/data/officer_details/district_name:label">
+                        <value>District</value>
+                    </text>
+                    <text id="/data/officer_details/district_name/Ambala:label">
+                        <value>Ambala</value>
+                    </text>
+                    <text id="/data/officer_details/district_name/Bhiwani:label">
+                        <value>Bhiwani</value>
+                    </text>
+                    <text id="/data/officer_details/district_name/Charkhi Dadri:label">
+                        <value>Charkhi Dadri</value>
+                    </text>
+                    <text id="/data/officer_details/district_name/Faridabad:label">
+                        <value>Faridabad</value>
+                    </text>
+                    <text id="/data/officer_details/district_name/Fatehabad:label">
+                        <value>Fatehabad</value>
+                    </text>
+                    <text id="/data/officer_details/district_name/Hisar:label">
+                        <value>Hisar</value>
+                    </text>
+                    <text id="/data/officer_details/district_name/Jhajjar:label">
+                        <value>Jhajjar</value>
+                    </text>
+                    <text id="/data/officer_details/district_name/Jind:label">
+                        <value>Jind</value>
+                    </text>
+                    <text id="/data/officer_details/district_name/Kaithal:label">
+                        <value>Kaithal</value>
+                    </text>
+                    <text id="/data/officer_details/district_name/Karnal:label">
+                        <value>Karnal</value>
+                    </text>
+                    <text id="/data/officer_details/district_name/Kurukshetra:label">
+                        <value>Kurukshetra</value>
+                    </text>
+                    <text id="/data/officer_details/district_name/Mahendragarh:label">
+                        <value>Mahendragarh</value>
+                    </text>
+                    <text id="/data/officer_details/district_name/Nuh Mewat:label">
+                        <value>Nuh Mewat</value>
+                    </text>
+                    <text id="/data/officer_details/district_name/Palwal:label">
+                        <value>Palwal</value>
+                    </text>
+                    <text id="/data/officer_details/district_name/Panchkula:label">
+                        <value>Panchkula</value>
+                    </text>
+                    <text id="/data/officer_details/district_name/Panipat:label">
+                        <value>Panipat</value>
+                    </text>
+                    <text id="/data/officer_details/district_name/Rewari:label">
+                        <value>Rewari</value>
+                    </text>
+                    <text id="/data/officer_details/district_name/Rohtak:label">
+                        <value>Rohtak</value>
+                    </text>
+                    <text id="/data/officer_details/district_name/Sirsa:label">
+                        <value>Sirsa</value>
+                    </text>
+                    <text id="/data/officer_details/district_name/Sonipat:label">
+                        <value>Sonipat</value>
+                    </text>
+                    <text id="/data/officer_details/district_name/Yamunanagar:label">
+                        <value>Yamunanagar</value>
+                    </text>
+                    <text id="/data/officer_details/block_name:label">
+                        <value>Block</value>
+                    </text>
+                    <text id="/data/officer_details/school_name:label">
+                        <value>School</value>
+                    </text>
+                    <text id="/data/officer_details/date_visit:label">
+                        <value>Enter the date of the visit</value>
+                    </text>
+                    <text id="/data/visit_details:label">
+                        <value>Visit Details (1/2)</value>
+                    </text>
+                    <text id="/data/visit_details/instruction_1:label">
+                        <value>After reaching the school, meet the Principal, ask the following question and submit their responses</value>
+                    </text>
+                    <text id="/data/visit_details/question_1:label">
+                        <value>Has the Principal received the amount of ₹ 2 lac for prefabrication of the Incubation Center?</value>
+                    </text>
+                    <text id="/data/visit_details/question_1/Yes:label">
+                        <value>Yes</value>
+                    </text>
+                    <text id="/data/visit_details/question_1/No:label">
+                        <value>No</value>
+                    </text>
+                    <text id="/data/visit_details/question_2:label">
+                        <value>Has the Principal received approval for the cost estimate from the Executive Engineer (B&amp;R)?</value>
+                    </text>
+                    <text id="/data/visit_details/question_2/Yes:label">
+                        <value>Yes</value>
+                    </text>
+                    <text id="/data/visit_details/question_2/No:label">
+                        <value>No</value>
+                    </text>
+                    <text id="/data/class1_details:label">
+                        <value>Visit Details (2/2)</value>
+                    </text>
+                    <text id="/data/class1_details/instruction_2:label">
+                        <value>Visit the Incubation Center in the school. Submit the response for each question after observing the Incubation Center. Also click and submit a photo for each question</value>
+                    </text>
+                    <text id="/data/class1_details/question_3:label">
+                        <value>What is the status of white-washing of the Incubation Center</value>
+                    </text>
+                    <text id="/data/class1_details/question_3/Completed:label">
+                        <value>Completed</value>
+                    </text>
+                    <text id="/data/class1_details/question_3/In progress:label">
+                        <value>In progress</value>
+                    </text>
+                    <text id="/data/class1_details/question_3/Yet to be started:label">
+                        <value>Yet to be started</value>
+                    </text>
+                    <text id="/data/class1_details/image1:label">
+                        <value>Click a photo of the walls of the Incubation Center</value>
+                    </text>
+                    <text id="/data/class1_details/question_4:label">
+                        <value>What is the status of installing the aluminium partition in the Incubation Center?</value>
+                    </text>
+                    <text id="/data/class1_details/question_4/Completed:label">
+                        <value>Completed</value>
+                    </text>
+                    <text id="/data/class1_details/question_4/In progress:label">
+                        <value>In progress</value>
+                    </text>
+                    <text id="/data/class1_details/question_4/Yet to be started:label">
+                        <value>Yet to be started</value>
+                    </text>
+                    <text id="/data/class1_details/image2:label">
+                        <value>Click a photo of the area of the alumnium partition</value>
+                    </text>
+                    <text id="/data/class1_details/question_5:label">
+                        <value>What is the status of arranging provisions for installing a split AC?</value>
+                    </text>
+                    <text id="/data/class1_details/question_5/Completed:label">
+                        <value>Completed</value>
+                    </text>
+                    <text id="/data/class1_details/question_5/In progress:label">
+                        <value>In progress</value>
+                    </text>
+                    <text id="/data/class1_details/question_5/Yet to be started:label">
+                        <value>Yet to be started</value>
+                    </text>
+                    <text id="/data/class1_details/image3:label">
+                        <value>Click a photo showing the provisions for the split AC</value>
+                    </text>
+                    <text id="/data/class1_details/question_6:label">
+                        <value>What is the status of installing sufficient plug points and adapters, as per requirements of the Incubation Center?</value>
+                    </text>
+                    <text id="/data/class1_details/question_6/Completed:label">
+                        <value>Completed</value>
+                    </text>
+                    <text id="/data/class1_details/question_6/In progress:label">
+                        <value>In progress</value>
+                    </text>
+                    <text id="/data/class1_details/question_6/Yet to be started:label">
+                        <value>Yet to be started</value>
+                    </text>
+                    <text id="/data/class1_details/image4:label">
+                        <value>Click a photo capturing the plug points and adapters</value>
+                    </text>
+                    <text id="/data/class1_details/question_7:label">
+                        <value>What is the status of arranging provisions for installing a base for the electricity generator in the Incubation Center?</value>
+                    </text>
+                    <text id="/data/class1_details/question_7/Completed:label">
+                        <value>Completed</value>
+                    </text>
+                    <text id="/data/class1_details/question_7/In progress:label">
+                        <value>In progress</value>
+                    </text>
+                    <text id="/data/class1_details/question_7/Yet to be started:label">
+                        <value>Yet to be started</value>
+                    </text>
+                    <text id="/data/class1_details/image5:label">
+                        <value>Click a photo of the base of the electrcity generator</value>
+                    </text>
+                    <text id="/data/class1_details/question_8:label">
+                        <value>What is the status of installing the 'DAKSH' board at the main entrance?</value>
+                    </text>
+                    <text id="/data/class1_details/question_8/Completed:label">
+                        <value>Completed</value>
+                    </text>
+                    <text id="/data/class1_details/question_8/In progress:label">
+                        <value>In progress</value>
+                    </text>
+                    <text id="/data/class1_details/question_8/Yet to be started:label">
+                        <value>Yet to be started</value>
+                    </text>
+                    <text id="/data/class1_details/image6:label">
+                        <value>Click a photo of the 'DAKSH' board</value>
+                    </text>
+                    <text id="school_name-0">
+                        <value>GSSS Adhoya-10</value>
+                    </text>
+                    <text id="school_name-1">
+                        <value>GSSS Rambagh Road-7</value>
+                    </text>
+                    <text id="school_name-2">
+                        <value>GSSS Bamla-340</value>
+                    </text>
+                    <text id="school_name-3">
+                        <value>GGSSS Kharak Kalan-331</value>
+                    </text>
+                    <text id="school_name-4">
+                        <value>GGSSS Charkhi Dadri-375</value>
+                    </text>
+                    <text id="school_name-5">
+                        <value>GMSSS APPLIED LEARNING SKILLS SECTOR- 28-6880</value>
+                    </text>
+                    <text id="school_name-6">
+                        <value>GGSSS Bhuna-3268</value>
+                    </text>
+                    <text id="school_name-7">
+                        <value>GSSS Chander Kalan-3400</value>
+                    </text>
+                    <text id="school_name-8">
+                        <value>GSSS Talwandi Rana-1489</value>
+                    </text>
+                    <text id="school_name-9">
+                        <value>GGSSS HISAR-1444</value>
+                    </text>
+                    <text id="school_name-10">
+                        <value>GSSS D BLOCK-1375</value>
+                    </text>
+                    <text id="school_name-11">
+                        <value>GSSS Dujana-3083</value>
+                    </text>
+                    <text id="school_name-12">
+                        <value>GGSSS ( 1748) Jind-1748</value>
+                    </text>
+                    <text id="school_name-13">
+                        <value>GGSSS Narwana-1519</value>
+                    </text>
+                    <text id="school_name-14">
+                        <value>GGSSS Cheeka-2163</value>
+                    </text>
+                    <text id="school_name-15">
+                        <value>AMSSS Songri-6644</value>
+                    </text>
+                    <text id="school_name-16">
+                        <value>GGSSS Kaithal-2156</value>
+                    </text>
+                    <text id="school_name-17">
+                        <value>GGSSS Nissing-1946</value>
+                    </text>
+                    <text id="school_name-18">
+                        <value>GSSS Sambhli-1805</value>
+                    </text>
+                    <text id="school_name-19">
+                        <value>GGSSS Railway Road Karnal-1939</value>
+                    </text>
+                    <text id="school_name-20">
+                        <value>GGSSS Premnagar-1789</value>
+                    </text>
+                    <text id="school_name-21">
+                        <value>GSSS Dudhla Morthala-2396</value>
+                    </text>
+                    <text id="school_name-22">
+                        <value>GSSS Mathana-2408</value>
+                    </text>
+                    <text id="school_name-23">
+                        <value>GSSS Kharindwa-2404</value>
+                    </text>
+                    <text id="school_name-24">
+                        <value>GSSS Mahendergarh-3882</value>
+                    </text>
+                    <text id="school_name-25">
+                        <value>GSSS Rathiwas-710</value>
+                    </text>
+                    <text id="school_name-26">
+                        <value>GSSS Punhana-885</value>
+                    </text>
+                    <text id="school_name-27">
+                        <value>GSSS M.P.AHIR-919</value>
+                    </text>
+                    <text id="school_name-28">
+                        <value>GGSSS Hathin-980</value>
+                    </text>
+                    <text id="school_name-29">
+                        <value>GGSSS Palwal Camp-993</value>
+                    </text>
+                    <text id="school_name-30">
+                        <value>GSSS Dhatir-1135</value>
+                    </text>
+                    <text id="school_name-31">
+                        <value>GSSS SEC-7 PKL-3703</value>
+                    </text>
+                    <text id="school_name-32">
+                        <value>GSSS Sec-6 PKL-3704</value>
+                    </text>
+                    <text id="school_name-33">
+                        <value>GGSSS Siwah-2120</value>
+                    </text>
+                    <text id="school_name-34">
+                        <value>GGSSS Shiv Nagar-2055</value>
+                    </text>
+                    <text id="school_name-35">
+                        <value>GSSS Rewari-2540</value>
+                    </text>
+                    <text id="school_name-36">
+                        <value>GGSSS Model Town Rohtak-2676</value>
+                    </text>
+                    <text id="school_name-37">
+                        <value>AMSSS Jalalana-6660</value>
+                    </text>
+                    <text id="school_name-38">
+                        <value>GGSSS Ellenabad-3051</value>
+                    </text>
+                    <text id="school_name-39">
+                        <value>GSSS Kussar-2981</value>
+                    </text>
+                    <text id="school_name-40">
+                        <value>GGSSS Sonipat (Murthal Adda)Urban-3490</value>
+                    </text>
+                    <text id="school_name-41">
+                        <value>GGSSS Gohana-3458</value>
+                    </text>
+                    <text id="school_name-42">
+                        <value>GGSSS Nangal Kalan-3643</value>
+                    </text>
+                    <text id="school_name-43">
+                        <value>GGSSS Datoil-3548</value>
+                    </text>
+                    <text id="school_name-44">
+                        <value>GGSSS Sabji Mandi Yamunanagar-195</value>
+                    </text>
+                    <text id="question_1-0">
+                        <value>Yes</value>
+                    </text>
+                    <text id="question_1-1">
+                        <value>No</value>
+                    </text>
+                    <text id="question_2-0">
+                        <value>Yes</value>
+                    </text>
+                    <text id="question_2-1">
+                        <value>No</value>
+                    </text>
+                    <text id="question_3-0">
+                        <value>Completed</value>
+                    </text>
+                    <text id="question_3-1">
+                        <value>In progress</value>
+                    </text>
+                    <text id="question_3-2">
+                        <value>Yet to be started</value>
+                    </text>
+                    <text id="question_4-0">
+                        <value>Completed</value>
+                    </text>
+                    <text id="question_4-1">
+                        <value>In progress</value>
+                    </text>
+                    <text id="question_4-2">
+                        <value>Yet to be started</value>
+                    </text>
+                    <text id="question_5-0">
+                        <value>Completed</value>
+                    </text>
+                    <text id="question_5-1">
+                        <value>In progress</value>
+                    </text>
+                    <text id="question_5-2">
+                        <value>Yet to be started</value>
+                    </text>
+                    <text id="question_6-0">
+                        <value>Completed</value>
+                    </text>
+                    <text id="question_6-1">
+                        <value>In progress</value>
+                    </text>
+                    <text id="question_6-2">
+                        <value>Yet to be started</value>
+                    </text>
+                    <text id="question_7-0">
+                        <value>Completed</value>
+                    </text>
+                    <text id="question_7-1">
+                        <value>In progress</value>
+                    </text>
+                    <text id="question_7-2">
+                        <value>Yet to be started</value>
+                    </text>
+                    <text id="question_8-0">
+                        <value>Completed</value>
+                    </text>
+                    <text id="question_8-1">
+                        <value>In progress</value>
+                    </text>
+                    <text id="question_8-2">
+                        <value>Yet to be started</value>
+                    </text>
+                    <text id="district_name-0">
+                        <value>Ambala</value>
+                    </text>
+                    <text id="district_name-1">
+                        <value>Bhiwani</value>
+                    </text>
+                    <text id="district_name-2">
+                        <value>Charkhi Dadri</value>
+                    </text>
+                    <text id="district_name-3">
+                        <value>Faridabad</value>
+                    </text>
+                    <text id="district_name-4">
+                        <value>Fatehabad</value>
+                    </text>
+                    <text id="district_name-5">
+                        <value>Hisar</value>
+                    </text>
+                    <text id="district_name-6">
+                        <value>Jhajjar</value>
+                    </text>
+                    <text id="district_name-7">
+                        <value>Jind</value>
+                    </text>
+                    <text id="district_name-8">
+                        <value>Kaithal</value>
+                    </text>
+                    <text id="district_name-9">
+                        <value>Karnal</value>
+                    </text>
+                    <text id="district_name-10">
+                        <value>Kurukshetra</value>
+                    </text>
+                    <text id="district_name-11">
+                        <value>Mahendragarh</value>
+                    </text>
+                    <text id="district_name-12">
+                        <value>Nuh Mewat</value>
+                    </text>
+                    <text id="district_name-13">
+                        <value>Palwal</value>
+                    </text>
+                    <text id="district_name-14">
+                        <value>Panchkula</value>
+                    </text>
+                    <text id="district_name-15">
+                        <value>Panipat</value>
+                    </text>
+                    <text id="district_name-16">
+                        <value>Rewari</value>
+                    </text>
+                    <text id="district_name-17">
+                        <value>Rohtak</value>
+                    </text>
+                    <text id="district_name-18">
+                        <value>Sirsa</value>
+                    </text>
+                    <text id="district_name-19">
+                        <value>Sonipat</value>
+                    </text>
+                    <text id="district_name-20">
+                        <value>Yamunanagar</value>
+                    </text>
+                    <text id="block_name-0">
+                        <value>1 - Ambala-II (Cantt)</value>
+                    </text>
+                    <text id="block_name-1">
+                        <value>2 - Barara</value>
+                    </text>
+                    <text id="block_name-2">
+                        <value>3 - Bhiwani</value>
+                    </text>
+                    <text id="block_name-3">
+                        <value>4 - Dadri</value>
+                    </text>
+                    <text id="block_name-4">
+                        <value>5 - Faridabad</value>
+                    </text>
+                    <text id="block_name-5">
+                        <value>6 - Bhuna</value>
+                    </text>
+                    <text id="block_name-6">
+                        <value>7 - Tohana</value>
+                    </text>
+                    <text id="block_name-7">
+                        <value>8 - Hisar - I</value>
+                    </text>
+                    <text id="block_name-8">
+                        <value>9 - Hisar - II</value>
+                    </text>
+                    <text id="block_name-9">
+                        <value>10 - Jhajjar</value>
+                    </text>
+                    <text id="block_name-10">
+                        <value>11 - Jind</value>
+                    </text>
+                    <text id="block_name-11">
+                        <value>12 - Narwana</value>
+                    </text>
+                    <text id="block_name-12">
+                        <value>13 - Guhla at Cheeka</value>
+                    </text>
+                    <text id="block_name-13">
+                        <value>14 - Rajaund</value>
+                    </text>
+                    <text id="block_name-14">
+                        <value>15 - Kaithal</value>
+                    </text>
+                    <text id="block_name-15">
+                        <value>16 - Nissing at Chirao</value>
+                    </text>
+                    <text id="block_name-16">
+                        <value>17 - Karnal</value>
+                    </text>
+                    <text id="block_name-17">
+                        <value>18 - Thanesar</value>
+                    </text>
+                    <text id="block_name-18">
+                        <value>19 - Shahabad</value>
+                    </text>
+                    <text id="block_name-19">
+                        <value>20 - Mahendergarh</value>
+                    </text>
+                    <text id="block_name-20">
+                        <value>21 - Taoru</value>
+                    </text>
+                    <text id="block_name-21">
+                        <value>22 - Punhana</value>
+                    </text>
+                    <text id="block_name-22">
+                        <value>23 - Hathin</value>
+                    </text>
+                    <text id="block_name-23">
+                        <value>24 - Palwal</value>
+                    </text>
+                    <text id="block_name-24">
+                        <value>25 - Pinjore</value>
+                    </text>
+                    <text id="block_name-25">
+                        <value>26 - Panipat</value>
+                    </text>
+                    <text id="block_name-26">
+                        <value>27 - Rewari</value>
+                    </text>
+                    <text id="block_name-27">
+                        <value>28 - Rohtak</value>
+                    </text>
+                    <text id="block_name-28">
+                        <value>29 - Odhan</value>
+                    </text>
+                    <text id="block_name-29">
+                        <value>30 - Ellenabad</value>
+                    </text>
+                    <text id="block_name-30">
+                        <value>31 - Rania</value>
+                    </text>
+                    <text id="block_name-31">
+                        <value>32 - Sonipat</value>
+                    </text>
+                    <text id="block_name-32">
+                        <value>33 - Gohana</value>
+                    </text>
+                    <text id="block_name-33">
+                        <value>34 - Rai</value>
+                    </text>
+                    <text id="block_name-34">
+                        <value>35 - Ganaur</value>
+                    </text>
+                    <text id="block_name-35">
+                        <value>36 - Jagadhri</value>
+                    </text>
+                </translation>
+            </itext>
+            <instance>
+                <data id="IC_NSQF" version="1">
+                    <officer_details>
+                        <user_name>prefilled</user_name>
+                        <designation>prefilled</designation>
+                        <name>prefilled</name>
+                        <district_name />
+                        <block_name />
+                        <school_name />
+                        <date_visit />
+                    </officer_details>
+                    <visit_details>
+                        <instruction_1 />
+                        <question_1 />
+                        <question_2 />
+                    </visit_details>
+                    <class1_details>
+                        <instruction_2 />
+                        <question_3 />
+                        <image1 />
+                        <question_4 />
+                        <image2 />
+                        <question_5 />
+                        <image3 />
+                        <question_6 />
+                        <image4 />
+                        <question_7 />
+                        <image5 />
+                        <question_8 />
+                        <image6 />
+                    </class1_details>
+                    <meta>
+                        <instanceID />
+                    </meta>
+                </data>
+            </instance>
+            <instance id="school_name">
+                <root>
+                    <item>
+                        <itextId>school_name-0</itextId>
+                        <block_name>Barara</block_name>
+                        <district_name>Ambala</district_name>
+                        <name>GSSS Adhoya-10</name>
+                    </item>
+                    <item>
+                        <itextId>school_name-1</itextId>
+                        <block_name>Ambala-II (Cantt)</block_name>
+                        <district_name>Ambala</district_name>
+                        <name>GSSS Rambagh Road-7</name>
+                    </item>
+                    <item>
+                        <itextId>school_name-2</itextId>
+                        <block_name>Bhiwani</block_name>
+                        <district_name>Bhiwani</district_name>
+                        <name>GSSS Bamla-340</name>
+                    </item>
+                    <item>
+                        <itextId>school_name-3</itextId>
+                        <block_name>Bhiwani</block_name>
+                        <district_name>Bhiwani</district_name>
+                        <name>GGSSS Kharak Kalan-331</name>
+                    </item>
+                    <item>
+                        <itextId>school_name-4</itextId>
+                        <block_name>Dadri</block_name>
+                        <district_name>Charkhi Dadri</district_name>
+                        <name>GGSSS Charkhi Dadri-375</name>
+                    </item>
+                    <item>
+                        <itextId>school_name-5</itextId>
+                        <block_name>Faridabad</block_name>
+                        <district_name>Faridabad</district_name>
+                        <name>GMSSS APPLIED LEARNING SKILLS SECTOR- 28-6880</name>
+                    </item>
+                    <item>
+                        <itextId>school_name-6</itextId>
+                        <block_name>Bhuna</block_name>
+                        <district_name>Fatehabad</district_name>
+                        <name>GGSSS Bhuna-3268</name>
+                    </item>
+                    <item>
+                        <itextId>school_name-7</itextId>
+                        <block_name>Tohana</block_name>
+                        <district_name>Fatehabad</district_name>
+                        <name>GSSS Chander Kalan-3400</name>
+                    </item>
+                    <item>
+                        <itextId>school_name-8</itextId>
+                        <block_name>Hisar - I</block_name>
+                        <district_name>Hisar</district_name>
+                        <name>GSSS Talwandi Rana-1489</name>
+                    </item>
+                    <item>
+                        <itextId>school_name-9</itextId>
+                        <block_name>Hisar - II</block_name>
+                        <district_name>HISAR</district_name>
+                        <name>GGSSS HISAR-1444</name>
+                    </item>
+                    <item>
+                        <itextId>school_name-10</itextId>
+                        <block_name>Hisar - II</block_name>
+                        <district_name>Hisar</district_name>
+                        <name>GSSS D BLOCK-1375</name>
+                    </item>
+                    <item>
+                        <itextId>school_name-11</itextId>
+                        <block_name>Jhajjar</block_name>
+                        <district_name>Jhajjar</district_name>
+                        <name>GSSS Dujana-3083</name>
+                    </item>
+                    <item>
+                        <itextId>school_name-12</itextId>
+                        <block_name>Jind</block_name>
+                        <district_name>Jind</district_name>
+                        <name>GGSSS ( 1748) Jind-1748</name>
+                    </item>
+                    <item>
+                        <itextId>school_name-13</itextId>
+                        <block_name>Narwana</block_name>
+                        <district_name>Jind</district_name>
+                        <name>GGSSS Narwana-1519</name>
+                    </item>
+                    <item>
+                        <itextId>school_name-14</itextId>
+                        <block_name>Guhla at Cheeka</block_name>
+                        <district_name>Kaithal</district_name>
+                        <name>GGSSS Cheeka-2163</name>
+                    </item>
+                    <item>
+                        <itextId>school_name-15</itextId>
+                        <block_name>Rajaund</block_name>
+                        <district_name>Kaithal</district_name>
+                        <name>AMSSS Songri-6644</name>
+                    </item>
+                    <item>
+                        <itextId>school_name-16</itextId>
+                        <block_name>Kaithal</block_name>
+                        <district_name>Kaithal</district_name>
+                        <name>GGSSS Kaithal-2156</name>
+                    </item>
+                    <item>
+                        <itextId>school_name-17</itextId>
+                        <block_name>Nissing at Chirao</block_name>
+                        <district_name>Karnal</district_name>
+                        <name>GGSSS Nissing-1946</name>
+                    </item>
+                    <item>
+                        <itextId>school_name-18</itextId>
+                        <block_name>Nissing at Chirao</block_name>
+                        <district_name>Karnal</district_name>
+                        <name>GSSS Sambhli-1805</name>
+                    </item>
+                    <item>
+                        <itextId>school_name-19</itextId>
+                        <block_name>Karnal</block_name>
+                        <district_name>Karnal</district_name>
+                        <name>GGSSS Railway Road Karnal-1939</name>
+                    </item>
+                    <item>
+                        <itextId>school_name-20</itextId>
+                        <block_name>Karnal</block_name>
+                        <district_name>Karnal</district_name>
+                        <name>GGSSS Premnagar-1789</name>
+                    </item>
+                    <item>
+                        <itextId>school_name-21</itextId>
+                        <block_name>Thanesar</block_name>
+                        <district_name>Kurukshetra</district_name>
+                        <name>GSSS Dudhla Morthala-2396</name>
+                    </item>
+                    <item>
+                        <itextId>school_name-22</itextId>
+                        <block_name>Thanesar</block_name>
+                        <district_name>Kurukshetra</district_name>
+                        <name>GSSS Mathana-2408</name>
+                    </item>
+                    <item>
+                        <itextId>school_name-23</itextId>
+                        <block_name>Shahabad</block_name>
+                        <district_name>Kurukshetra</district_name>
+                        <name>GSSS Kharindwa-2404</name>
+                    </item>
+                    <item>
+                        <itextId>school_name-24</itextId>
+                        <block_name>Mahendergarh</block_name>
+                        <district_name>Mahendergarh</district_name>
+                        <name>GSSS Mahendergarh-3882</name>
+                    </item>
+                    <item>
+                        <itextId>school_name-25</itextId>
+                        <block_name>Taoru</block_name>
+                        <district_name>Mewat</district_name>
+                        <name>GSSS Rathiwas-710</name>
+                    </item>
+                    <item>
+                        <itextId>school_name-26</itextId>
+                        <block_name>Punhana</block_name>
+                        <district_name>Mewat</district_name>
+                        <name>GSSS Punhana-885</name>
+                    </item>
+                    <item>
+                        <itextId>school_name-27</itextId>
+                        <block_name>Taoru</block_name>
+                        <district_name>Mewat</district_name>
+                        <name>GSSS M.P.AHIR-919</name>
+                    </item>
+                    <item>
+                        <itextId>school_name-28</itextId>
+                        <block_name>Hathin</block_name>
+                        <district_name>Palwal</district_name>
+                        <name>GGSSS Hathin-980</name>
+                    </item>
+                    <item>
+                        <itextId>school_name-29</itextId>
+                        <block_name>Palwal</block_name>
+                        <district_name>Palwal</district_name>
+                        <name>GGSSS Palwal Camp-993</name>
+                    </item>
+                    <item>
+                        <itextId>school_name-30</itextId>
+                        <block_name>Palwal</block_name>
+                        <district_name>Palwal</district_name>
+                        <name>GSSS Dhatir-1135</name>
+                    </item>
+                    <item>
+                        <itextId>school_name-31</itextId>
+                        <block_name>Pinjore</block_name>
+                        <district_name>Panchkula</district_name>
+                        <name>GSSS SEC-7 PKL-3703</name>
+                    </item>
+                    <item>
+                        <itextId>school_name-32</itextId>
+                        <block_name>Pinjore</block_name>
+                        <district_name>Panchkula</district_name>
+                        <name>GSSS Sec-6 PKL-3704</name>
+                    </item>
+                    <item>
+                        <itextId>school_name-33</itextId>
+                        <block_name>Panipat</block_name>
+                        <district_name>Panipat</district_name>
+                        <name>GGSSS Siwah-2120</name>
+                    </item>
+                    <item>
+                        <itextId>school_name-34</itextId>
+                        <block_name>Panipat</block_name>
+                        <district_name>Panipat</district_name>
+                        <name>GGSSS Shiv Nagar-2055</name>
+                    </item>
+                    <item>
+                        <itextId>school_name-35</itextId>
+                        <block_name>Rewari</block_name>
+                        <district_name>Rewari</district_name>
+                        <name>GSSS Rewari-2540</name>
+                    </item>
+                    <item>
+                        <itextId>school_name-36</itextId>
+                        <block_name>Rohtak</block_name>
+                        <district_name>Rohtak</district_name>
+                        <name>GGSSS Model Town Rohtak-2676</name>
+                    </item>
+                    <item>
+                        <itextId>school_name-37</itextId>
+                        <block_name>Odhan</block_name>
+                        <district_name>Sirsa</district_name>
+                        <name>AMSSS Jalalana-6660</name>
+                    </item>
+                    <item>
+                        <itextId>school_name-38</itextId>
+                        <block_name>Ellenabad</block_name>
+                        <district_name>Sirsa</district_name>
+                        <name>GGSSS Ellenabad-3051</name>
+                    </item>
+                    <item>
+                        <itextId>school_name-39</itextId>
+                        <block_name>Rania</block_name>
+                        <district_name>Sirsa</district_name>
+                        <name>GSSS Kussar-2981</name>
+                    </item>
+                    <item>
+                        <itextId>school_name-40</itextId>
+                        <block_name>Sonipat</block_name>
+                        <district_name>Sonipat</district_name>
+                        <name>GGSSS Sonipat (Murthal Adda)Urban-3490</name>
+                    </item>
+                    <item>
+                        <itextId>school_name-41</itextId>
+                        <block_name>Gohana</block_name>
+                        <district_name>Sonipat</district_name>
+                        <name>GGSSS Gohana-3458</name>
+                    </item>
+                    <item>
+                        <itextId>school_name-42</itextId>
+                        <block_name>Rai</block_name>
+                        <district_name>Sonipat</district_name>
+                        <name>GGSSS Nangal Kalan-3643</name>
+                    </item>
+                    <item>
+                        <itextId>school_name-43</itextId>
+                        <block_name>Ganaur</block_name>
+                        <district_name>Sonipat</district_name>
+                        <name>GGSSS Datoil-3548</name>
+                    </item>
+                    <item>
+                        <itextId>school_name-44</itextId>
+                        <block_name>Jagadhri</block_name>
+                        <district_name>Yamuna Nagar</district_name>
+                        <name>GGSSS Sabji Mandi Yamunanagar-195</name>
+                    </item>
+                </root>
+            </instance>
+            <instance id="question_1">
+                <root>
+                    <item>
+                        <itextId>question_1-0</itextId>
+                        <name>Yes</name>
+                    </item>
+                    <item>
+                        <itextId>question_1-1</itextId>
+                        <name>No</name>
+                    </item>
+                </root>
+            </instance>
+            <instance id="question_2">
+                <root>
+                    <item>
+                        <itextId>question_2-0</itextId>
+                        <name>Yes</name>
+                    </item>
+                    <item>
+                        <itextId>question_2-1</itextId>
+                        <name>No</name>
+                    </item>
+                </root>
+            </instance>
+            <instance id="question_3">
+                <root>
+                    <item>
+                        <itextId>question_3-0</itextId>
+                        <name>Completed</name>
+                    </item>
+                    <item>
+                        <itextId>question_3-1</itextId>
+                        <name>In progress</name>
+                    </item>
+                    <item>
+                        <itextId>question_3-2</itextId>
+                        <name>Yet to be started</name>
+                    </item>
+                </root>
+            </instance>
+            <instance id="question_4">
+                <root>
+                    <item>
+                        <itextId>question_4-0</itextId>
+                        <name>Completed</name>
+                    </item>
+                    <item>
+                        <itextId>question_4-1</itextId>
+                        <name>In progress</name>
+                    </item>
+                    <item>
+                        <itextId>question_4-2</itextId>
+                        <name>Yet to be started</name>
+                    </item>
+                </root>
+            </instance>
+            <instance id="question_5">
+                <root>
+                    <item>
+                        <itextId>question_5-0</itextId>
+                        <name>Completed</name>
+                    </item>
+                    <item>
+                        <itextId>question_5-1</itextId>
+                        <name>In progress</name>
+                    </item>
+                    <item>
+                        <itextId>question_5-2</itextId>
+                        <name>Yet to be started</name>
+                    </item>
+                </root>
+            </instance>
+            <instance id="question_6">
+                <root>
+                    <item>
+                        <itextId>question_6-0</itextId>
+                        <name>Completed</name>
+                    </item>
+                    <item>
+                        <itextId>question_6-1</itextId>
+                        <name>In progress</name>
+                    </item>
+                    <item>
+                        <itextId>question_6-2</itextId>
+                        <name>Yet to be started</name>
+                    </item>
+                </root>
+            </instance>
+            <instance id="question_7">
+                <root>
+                    <item>
+                        <itextId>question_7-0</itextId>
+                        <name>Completed</name>
+                    </item>
+                    <item>
+                        <itextId>question_7-1</itextId>
+                        <name>In progress</name>
+                    </item>
+                    <item>
+                        <itextId>question_7-2</itextId>
+                        <name>Yet to be started</name>
+                    </item>
+                </root>
+            </instance>
+            <instance id="question_8">
+                <root>
+                    <item>
+                        <itextId>question_8-0</itextId>
+                        <name>Completed</name>
+                    </item>
+                    <item>
+                        <itextId>question_8-1</itextId>
+                        <name>In progress</name>
+                    </item>
+                    <item>
+                        <itextId>question_8-2</itextId>
+                        <name>Yet to be started</name>
+                    </item>
+                </root>
+            </instance>
+            <instance id="district_name">
+                <root>
+                    <item>
+                        <itextId>district_name-0</itextId>
+                        <name>Ambala</name>
+                    </item>
+                    <item>
+                        <itextId>district_name-1</itextId>
+                        <name>Bhiwani</name>
+                    </item>
+                    <item>
+                        <itextId>district_name-2</itextId>
+                        <name>Charkhi Dadri</name>
+                    </item>
+                    <item>
+                        <itextId>district_name-3</itextId>
+                        <name>Faridabad</name>
+                    </item>
+                    <item>
+                        <itextId>district_name-4</itextId>
+                        <name>Fatehabad</name>
+                    </item>
+                    <item>
+                        <itextId>district_name-5</itextId>
+                        <name>Hisar</name>
+                    </item>
+                    <item>
+                        <itextId>district_name-6</itextId>
+                        <name>Jhajjar</name>
+                    </item>
+                    <item>
+                        <itextId>district_name-7</itextId>
+                        <name>Jind</name>
+                    </item>
+                    <item>
+                        <itextId>district_name-8</itextId>
+                        <name>Kaithal</name>
+                    </item>
+                    <item>
+                        <itextId>district_name-9</itextId>
+                        <name>Karnal</name>
+                    </item>
+                    <item>
+                        <itextId>district_name-10</itextId>
+                        <name>Kurukshetra</name>
+                    </item>
+                    <item>
+                        <itextId>district_name-11</itextId>
+                        <name>Mahendragarh</name>
+                    </item>
+                    <item>
+                        <itextId>district_name-12</itextId>
+                        <name>Nuh Mewat</name>
+                    </item>
+                    <item>
+                        <itextId>district_name-13</itextId>
+                        <name>Palwal</name>
+                    </item>
+                    <item>
+                        <itextId>district_name-14</itextId>
+                        <name>Panchkula</name>
+                    </item>
+                    <item>
+                        <itextId>district_name-15</itextId>
+                        <name>Panipat</name>
+                    </item>
+                    <item>
+                        <itextId>district_name-16</itextId>
+                        <name>Rewari</name>
+                    </item>
+                    <item>
+                        <itextId>district_name-17</itextId>
+                        <name>Rohtak</name>
+                    </item>
+                    <item>
+                        <itextId>district_name-18</itextId>
+                        <name>Sirsa</name>
+                    </item>
+                    <item>
+                        <itextId>district_name-19</itextId>
+                        <name>Sonipat</name>
+                    </item>
+                    <item>
+                        <itextId>district_name-20</itextId>
+                        <name>Yamunanagar</name>
+                    </item>
+                </root>
+            </instance>
+            <instance id="block_name">
+                <root>
+                    <item>
+                        <itextId>block_name-0</itextId>
+                        <district_name>Ambala</district_name>
+                        <name>Ambala-II (Cantt)</name>
+                    </item>
+                    <item>
+                        <itextId>block_name-1</itextId>
+                        <district_name>Ambala</district_name>
+                        <name>Barara</name>
+                    </item>
+                    <item>
+                        <itextId>block_name-2</itextId>
+                        <district_name>Bhiwani</district_name>
+                        <name>Bhiwani</name>
+                    </item>
+                    <item>
+                        <itextId>block_name-3</itextId>
+                        <district_name>Charkhi Dadri</district_name>
+                        <name>Dadri</name>
+                    </item>
+                    <item>
+                        <itextId>block_name-4</itextId>
+                        <district_name>Faridabad</district_name>
+                        <name>Faridabad</name>
+                    </item>
+                    <item>
+                        <itextId>block_name-5</itextId>
+                        <district_name>Fatehabad</district_name>
+                        <name>Bhuna</name>
+                    </item>
+                    <item>
+                        <itextId>block_name-6</itextId>
+                        <district_name>Fatehabad</district_name>
+                        <name>Tohana</name>
+                    </item>
+                    <item>
+                        <itextId>block_name-7</itextId>
+                        <district_name>Hisar</district_name>
+                        <name>Hisar - I</name>
+                    </item>
+                    <item>
+                        <itextId>block_name-8</itextId>
+                        <district_name>Hisar</district_name>
+                        <name>Hisar - II</name>
+                    </item>
+                    <item>
+                        <itextId>block_name-9</itextId>
+                        <district_name>Jhajjar</district_name>
+                        <name>Jhajjar</name>
+                    </item>
+                    <item>
+                        <itextId>block_name-10</itextId>
+                        <district_name>Jind</district_name>
+                        <name>Jind</name>
+                    </item>
+                    <item>
+                        <itextId>block_name-11</itextId>
+                        <district_name>Jind</district_name>
+                        <name>Narwana</name>
+                    </item>
+                    <item>
+                        <itextId>block_name-12</itextId>
+                        <district_name>Kaithal</district_name>
+                        <name>Guhla at Cheeka</name>
+                    </item>
+                    <item>
+                        <itextId>block_name-13</itextId>
+                        <district_name>Kaithal</district_name>
+                        <name>Rajaund</name>
+                    </item>
+                    <item>
+                        <itextId>block_name-14</itextId>
+                        <district_name>Kaithal</district_name>
+                        <name>Kaithal</name>
+                    </item>
+                    <item>
+                        <itextId>block_name-15</itextId>
+                        <district_name>Karnal</district_name>
+                        <name>Nissing at Chirao</name>
+                    </item>
+                    <item>
+                        <itextId>block_name-16</itextId>
+                        <district_name>Karnal</district_name>
+                        <name>Karnal</name>
+                    </item>
+                    <item>
+                        <itextId>block_name-17</itextId>
+                        <district_name>Kurukshetra</district_name>
+                        <name>Thanesar</name>
+                    </item>
+                    <item>
+                        <itextId>block_name-18</itextId>
+                        <district_name>Kurukshetra</district_name>
+                        <name>Shahabad</name>
+                    </item>
+                    <item>
+                        <itextId>block_name-19</itextId>
+                        <district_name>Mahendergarh</district_name>
+                        <name>Mahendergarh</name>
+                    </item>
+                    <item>
+                        <itextId>block_name-20</itextId>
+                        <district_name>Mewat</district_name>
+                        <name>Taoru</name>
+                    </item>
+                    <item>
+                        <itextId>block_name-21</itextId>
+                        <district_name>Mewat</district_name>
+                        <name>Punhana</name>
+                    </item>
+                    <item>
+                        <itextId>block_name-22</itextId>
+                        <district_name>Palwal</district_name>
+                        <name>Hathin</name>
+                    </item>
+                    <item>
+                        <itextId>block_name-23</itextId>
+                        <district_name>Palwal</district_name>
+                        <name>Palwal</name>
+                    </item>
+                    <item>
+                        <itextId>block_name-24</itextId>
+                        <district_name>Panchkula</district_name>
+                        <name>Pinjore</name>
+                    </item>
+                    <item>
+                        <itextId>block_name-25</itextId>
+                        <district_name>Panipat</district_name>
+                        <name>Panipat</name>
+                    </item>
+                    <item>
+                        <itextId>block_name-26</itextId>
+                        <district_name>Rewari</district_name>
+                        <name>Rewari</name>
+                    </item>
+                    <item>
+                        <itextId>block_name-27</itextId>
+                        <district_name>Rohtak</district_name>
+                        <name>Rohtak</name>
+                    </item>
+                    <item>
+                        <itextId>block_name-28</itextId>
+                        <district_name>Sirsa</district_name>
+                        <name>Odhan</name>
+                    </item>
+                    <item>
+                        <itextId>block_name-29</itextId>
+                        <district_name>Sirsa</district_name>
+                        <name>Ellenabad</name>
+                    </item>
+                    <item>
+                        <itextId>block_name-30</itextId>
+                        <district_name>Sirsa</district_name>
+                        <name>Rania</name>
+                    </item>
+                    <item>
+                        <itextId>block_name-31</itextId>
+                        <district_name>Sonipat</district_name>
+                        <name>Sonipat</name>
+                    </item>
+                    <item>
+                        <itextId>block_name-32</itextId>
+                        <district_name>Sonipat</district_name>
+                        <name>Gohana</name>
+                    </item>
+                    <item>
+                        <itextId>block_name-33</itextId>
+                        <district_name>Sonipat</district_name>
+                        <name>Rai</name>
+                    </item>
+                    <item>
+                        <itextId>block_name-34</itextId>
+                        <district_name>Sonipat</district_name>
+                        <name>Ganaur</name>
+                    </item>
+                    <item>
+                        <itextId>block_name-35</itextId>
+                        <district_name>Yamuna Nagar</district_name>
+                        <name>Jagadhri</name>
+                    </item>
+                </root>
+            </instance>
+            <bind nodeset="/data/officer_details/user_name" readonly="true()" type="string" />
+            <bind nodeset="/data/officer_details/designation" readonly="true()" type="string" />
+            <bind nodeset="/data/officer_details/name" readonly="true()" type="string" />
+            <bind nodeset="/data/officer_details/district_name" required="true()" type="string" />
+            <bind nodeset="/data/officer_details/block_name" required="true()" type="string" />
+            <bind nodeset="/data/officer_details/school_name" required="true()" type="string" />
+            <bind nodeset="/data/officer_details/date_visit" required="true()" type="date" />
+            <bind nodeset="/data/visit_details/instruction_1" readonly="true()" type="string" />
+            <bind nodeset="/data/visit_details/question_1" required="true()" type="string" />
+            <bind nodeset="/data/visit_details/question_2" required="true()" type="string" />
+            <bind nodeset="/data/class1_details/instruction_2" readonly="true()" type="string" />
+            <bind nodeset="/data/class1_details/question_3" required="true()" type="string" />
+            <bind nodeset="/data/class1_details/image1" orx:max-pixels="512" required="true()" type="binary" />
+            <bind nodeset="/data/class1_details/question_4" required="true()" type="string" />
+            <bind nodeset="/data/class1_details/image2" orx:max-pixels="512" required="true()" type="binary" />
+            <bind nodeset="/data/class1_details/question_5" required="true()" type="string" />
+            <bind nodeset="/data/class1_details/image3" orx:max-pixels="512" required="true()" type="binary" />
+            <bind nodeset="/data/class1_details/question_6" required="true()" type="string" />
+            <bind nodeset="/data/class1_details/image4" orx:max-pixels="512" required="true()" type="binary" />
+            <bind nodeset="/data/class1_details/question_7" required="true()" type="string" />
+            <bind nodeset="/data/class1_details/image5" orx:max-pixels="512" required="true()" type="binary" />
+            <bind nodeset="/data/class1_details/question_8" required="true()" type="string" />
+            <bind nodeset="/data/class1_details/image6" orx:max-pixels="512" required="true()" type="binary" />
+            <bind jr:preload="uid" nodeset="/data/meta/instanceID" readonly="true()" type="string" />
+        </model>
+    </h:head>
+    <h:body class="pages">
+        <group appearance="field-list" ref="/data/officer_details">
+            <label ref="jr:itext('/data/officer_details:label')" />
+            <input ref="/data/officer_details/user_name">
+                <label ref="jr:itext('/data/officer_details/user_name:label')" />
+            </input>
+            <input ref="/data/officer_details/designation">
+                <label ref="jr:itext('/data/officer_details/designation:label')" />
+            </input>
+            <input ref="/data/officer_details/name">
+                <label ref="jr:itext('/data/officer_details/name:label')" />
+            </input>
+            <select1 appearance="minimal" ref="/data/officer_details/district_name">
+                <label ref="jr:itext('/data/officer_details/district_name:label')" />
+                <item>
+                    <label ref="jr:itext('/data/officer_details/district_name/Ambala:label')" />
+                    <value>Ambala</value>
+                </item>
+                <item>
+                    <label ref="jr:itext('/data/officer_details/district_name/Bhiwani:label')" />
+                    <value>Bhiwani</value>
+                </item>
+                <item>
+                    <label ref="jr:itext('/data/officer_details/district_name/Charkhi Dadri:label')" />
+                    <value>Charkhi Dadri</value>
+                </item>
+                <item>
+                    <label ref="jr:itext('/data/officer_details/district_name/Faridabad:label')" />
+                    <value>Faridabad</value>
+                </item>
+                <item>
+                    <label ref="jr:itext('/data/officer_details/district_name/Fatehabad:label')" />
+                    <value>Fatehabad</value>
+                </item>
+                <item>
+                    <label ref="jr:itext('/data/officer_details/district_name/Hisar:label')" />
+                    <value>Hisar</value>
+                </item>
+                <item>
+                    <label ref="jr:itext('/data/officer_details/district_name/Jhajjar:label')" />
+                    <value>Jhajjar</value>
+                </item>
+                <item>
+                    <label ref="jr:itext('/data/officer_details/district_name/Jind:label')" />
+                    <value>Jind</value>
+                </item>
+                <item>
+                    <label ref="jr:itext('/data/officer_details/district_name/Kaithal:label')" />
+                    <value>Kaithal</value>
+                </item>
+                <item>
+                    <label ref="jr:itext('/data/officer_details/district_name/Karnal:label')" />
+                    <value>Karnal</value>
+                </item>
+                <item>
+                    <label ref="jr:itext('/data/officer_details/district_name/Kurukshetra:label')" />
+                    <value>Kurukshetra</value>
+                </item>
+                <item>
+                    <label ref="jr:itext('/data/officer_details/district_name/Mahendragarh:label')" />
+                    <value>Mahendragarh</value>
+                </item>
+                <item>
+                    <label ref="jr:itext('/data/officer_details/district_name/Nuh Mewat:label')" />
+                    <value>Nuh Mewat</value>
+                </item>
+                <item>
+                    <label ref="jr:itext('/data/officer_details/district_name/Palwal:label')" />
+                    <value>Palwal</value>
+                </item>
+                <item>
+                    <label ref="jr:itext('/data/officer_details/district_name/Panchkula:label')" />
+                    <value>Panchkula</value>
+                </item>
+                <item>
+                    <label ref="jr:itext('/data/officer_details/district_name/Panipat:label')" />
+                    <value>Panipat</value>
+                </item>
+                <item>
+                    <label ref="jr:itext('/data/officer_details/district_name/Rewari:label')" />
+                    <value>Rewari</value>
+                </item>
+                <item>
+                    <label ref="jr:itext('/data/officer_details/district_name/Rohtak:label')" />
+                    <value>Rohtak</value>
+                </item>
+                <item>
+                    <label ref="jr:itext('/data/officer_details/district_name/Sirsa:label')" />
+                    <value>Sirsa</value>
+                </item>
+                <item>
+                    <label ref="jr:itext('/data/officer_details/district_name/Sonipat:label')" />
+                    <value>Sonipat</value>
+                </item>
+                <item>
+                    <label ref="jr:itext('/data/officer_details/district_name/Yamunanagar:label')" />
+                    <value>Yamunanagar</value>
+                </item>
+            </select1>
+            <select1 appearance="minimal" ref="/data/officer_details/block_name">
+                <label ref="jr:itext('/data/officer_details/block_name:label')" />
+                <itemset nodeset="instance('block_name')/root/item[district_name= /data/officer_details/district_name ]">
+                    <value ref="name" />
+                    <label ref="jr:itext(itextId)" />
+                </itemset>
+            </select1>
+            <select1 appearance="minimal" ref="/data/officer_details/school_name">
+                <label ref="jr:itext('/data/officer_details/school_name:label')" />
+                <itemset nodeset="instance('school_name')/root/item[district_name= /data/officer_details/district_name  and block_name= /data/officer_details/block_name ]">
+                    <value ref="name" />
+                    <label ref="jr:itext(itextId)" />
+                </itemset>
+            </select1>
+            <input ref="/data/officer_details/date_visit">
+                <label ref="jr:itext('/data/officer_details/date_visit:label')" />
+            </input>
+        </group>
+        <group appearance="field-list" ref="/data/visit_details">
+            <label ref="jr:itext('/data/visit_details:label')" />
+            <input ref="/data/visit_details/instruction_1">
+                <label ref="jr:itext('/data/visit_details/instruction_1:label')" />
+            </input>
+            <select1 ref="/data/visit_details/question_1">
+                <label ref="jr:itext('/data/visit_details/question_1:label')" />
+                <hint>The funds were transferred on 15th February, 2021</hint>
+                <item>
+                    <label ref="jr:itext('/data/visit_details/question_1/Yes:label')" />
+                    <value>Yes</value>
+                </item>
+                <item>
+                    <label ref="jr:itext('/data/visit_details/question_1/No:label')" />
+                    <value>No</value>
+                </item>
+            </select1>
+            <select1 ref="/data/visit_details/question_2">
+                <label ref="jr:itext('/data/visit_details/question_2:label')" />
+                <hint>After receiving the funds, Principals have to get a costing approval from the Executive Engineer (B&amp;R)</hint>
+                <item>
+                    <label ref="jr:itext('/data/visit_details/question_2/Yes:label')" />
+                    <value>Yes</value>
+                </item>
+                <item>
+                    <label ref="jr:itext('/data/visit_details/question_2/No:label')" />
+                    <value>No</value>
+                </item>
+            </select1>
+        </group>
+        <group appearance="field-list" ref="/data/class1_details">
+            <label ref="jr:itext('/data/class1_details:label')" />
+            <input ref="/data/class1_details/instruction_2">
+                <label ref="jr:itext('/data/class1_details/instruction_2:label')" />
+            </input>
+            <select1 appearance="minimal" ref="/data/class1_details/question_3">
+                <label ref="jr:itext('/data/class1_details/question_3:label')" />
+                <hint>All Principals have to ensure that the walls of the Incubation Center have been white-washed with the funds provided</hint>
+                <item>
+                    <label ref="jr:itext('/data/class1_details/question_3/Completed:label')" />
+                    <value>Completed</value>
+                </item>
+                <item>
+                    <label ref="jr:itext('/data/class1_details/question_3/In progress:label')" />
+                    <value>In progress</value>
+                </item>
+                <item>
+                    <label ref="jr:itext('/data/class1_details/question_3/Yet to be started:label')" />
+                    <value>Yet to be started</value>
+                </item>
+            </select1>
+            <upload appearance="new" mediatype="image/*" ref="/data/class1_details/image1">
+                <label ref="jr:itext('/data/class1_details/image1:label')" />
+            </upload>
+            <select1 appearance="minimal" ref="/data/class1_details/question_4">
+                <label ref="jr:itext('/data/class1_details/question_4:label')" />
+                <hint>As per the layout provided, alumnium partitions have to be installed in the Incubatio Centers</hint>
+                <item>
+                    <label ref="jr:itext('/data/class1_details/question_4/Completed:label')" />
+                    <value>Completed</value>
+                </item>
+                <item>
+                    <label ref="jr:itext('/data/class1_details/question_4/In progress:label')" />
+                    <value>In progress</value>
+                </item>
+                <item>
+                    <label ref="jr:itext('/data/class1_details/question_4/Yet to be started:label')" />
+                    <value>Yet to be started</value>
+                </item>
+            </select1>
+            <upload appearance="new" mediatype="image/*" ref="/data/class1_details/image2">
+                <label ref="jr:itext('/data/class1_details/image2:label')" />
+                <hint>If the aluminium partition has not been installed, click a photo of the area where it is supposed to be installed</hint>
+            </upload>
+            <select1 appearance="minimal" ref="/data/class1_details/question_5">
+                <label ref="jr:itext('/data/class1_details/question_5:label')" />
+                <hint>Space where the split AC is to be installed should be identified and plugs and adapters should be installed</hint>
+                <item>
+                    <label ref="jr:itext('/data/class1_details/question_5/Completed:label')" />
+                    <value>Completed</value>
+                </item>
+                <item>
+                    <label ref="jr:itext('/data/class1_details/question_5/In progress:label')" />
+                    <value>In progress</value>
+                </item>
+                <item>
+                    <label ref="jr:itext('/data/class1_details/question_5/Yet to be started:label')" />
+                    <value>Yet to be started</value>
+                </item>
+            </select1>
+            <upload appearance="new" mediatype="image/*" ref="/data/class1_details/image3">
+                <label ref="jr:itext('/data/class1_details/image3:label')" />
+                <hint>If the provisions for the split AC have not be arranged, click a photo of where the AC is supposed to be installed</hint>
+            </upload>
+            <select1 appearance="minimal" ref="/data/class1_details/question_6">
+                <label ref="jr:itext('/data/class1_details/question_6:label')" />
+                <hint>Power plugs have to be installed for the equipment in all Incubation Centers</hint>
+                <item>
+                    <label ref="jr:itext('/data/class1_details/question_6/Completed:label')" />
+                    <value>Completed</value>
+                </item>
+                <item>
+                    <label ref="jr:itext('/data/class1_details/question_6/In progress:label')" />
+                    <value>In progress</value>
+                </item>
+                <item>
+                    <label ref="jr:itext('/data/class1_details/question_6/Yet to be started:label')" />
+                    <value>Yet to be started</value>
+                </item>
+            </select1>
+            <upload appearance="new" mediatype="image/*" ref="/data/class1_details/image4">
+                <label ref="jr:itext('/data/class1_details/image4:label')" />
+                <hint>If the plug points and adapters have not been installed, click a photo of where the plug points and adapters are supposed to be installed</hint>
+            </upload>
+            <select1 appearance="minimal" ref="/data/class1_details/question_7">
+                <label ref="jr:itext('/data/class1_details/question_7:label')" />
+                <hint>A base has to be created upon which the electricity generator will be kept</hint>
+                <item>
+                    <label ref="jr:itext('/data/class1_details/question_7/Completed:label')" />
+                    <value>Completed</value>
+                </item>
+                <item>
+                    <label ref="jr:itext('/data/class1_details/question_7/In progress:label')" />
+                    <value>In progress</value>
+                </item>
+                <item>
+                    <label ref="jr:itext('/data/class1_details/question_7/Yet to be started:label')" />
+                    <value>Yet to be started</value>
+                </item>
+            </select1>
+            <upload appearance="new" mediatype="image/*" ref="/data/class1_details/image5">
+                <label ref="jr:itext('/data/class1_details/image5:label')" />
+                <hint>If the electricity generator has not been installed, click a photo of where it should be installed</hint>
+            </upload>
+            <select1 appearance="minimal" ref="/data/class1_details/question_8">
+                <label ref="jr:itext('/data/class1_details/question_8:label')" />
+                <hint>Based on the design sent, the DAKSH board has to be created and put up at the entrance of the Incubation Center</hint>
+                <item>
+                    <label ref="jr:itext('/data/class1_details/question_8/Completed:label')" />
+                    <value>Completed</value>
+                </item>
+                <item>
+                    <label ref="jr:itext('/data/class1_details/question_8/In progress:label')" />
+                    <value>In progress</value>
+                </item>
+                <item>
+                    <label ref="jr:itext('/data/class1_details/question_8/Yet to be started:label')" />
+                    <value>Yet to be started</value>
+                </item>
+            </select1>
+            <upload appearance="new" mediatype="image/*" ref="/data/class1_details/image6">
+                <label ref="jr:itext('/data/class1_details/image6:label')" />
+                <hint>If the 'DAKSH' board has not been installed, click a photo of the entrance where it is supposed to be installed</hint>
+            </upload>
+        </group>
+    </h:body>
+</h:html>
