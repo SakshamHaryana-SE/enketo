@@ -120,7 +120,7 @@ function _uploadRecord( record ) {
     // Add aatendance
     // Get form data
     let attendanceStatus = false;
-    let locationDetail = false;
+    let locationDetail = true;
     let traineeDetailStatus = false;
     let parserString = new DOMParser();
     let document = parserString.parseFromString(record.xml, 'text/xml');
@@ -333,7 +333,7 @@ function _uploadBatch( recordBatch, formData, attendanceStatus, traineeDetailSta
                 };
 
                 // Attendance submit
-                if(result.isIndustry && prefilledSubmissionId === 'preFilled') {
+                if(result.isIndustry && prefilledSubmissionId === 'preFilled' && traineeDetailStatus && locationDetail) {
                     // Attendance submit
                     const attendanceData = {
                         industry_id: parseInt(localStorage.getItem("industryId")),

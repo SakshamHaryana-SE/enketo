@@ -347,7 +347,8 @@ function _loadRecord( instanceId, confirmed ) {
             isAttendanceSubmit = result.isAttendanceSubmit
             isDetailCorrect = result.traineeDetailStatus
             locationDetail = result.locationDetail
-            console.log('isDetailCorrect', isDetailCorrect);
+            console.log('locationDetaillocationDetail', locationDetail);
+            console.log('isAttendanceSubmit', isAttendanceSubmit);
             if ( result.failedFiles && result.failedFiles.length > 0 ) {
                 msg = `${t( 'alert.submissionerror.fnfmsg', {
                     failedFiles: result.failedFiles.join( ', ' ),
@@ -406,11 +407,11 @@ function _loadRecord( instanceId, confirmed ) {
                     });
                     window.parent.postMessage(message, '*');
                 }
+            } else if (isAttendanceSubmit) {
+                gui.alert( "You’ve already marked your attendance for the day.", t( 'alert.submissionerror.heading' ) );
             }  else if (!locationDetail && locationDetail !== undefined) {
                 gui.alert( "Your location does not match with the industry's location, please try again when you are in the industry premises.\n" +
                     "आपका स्थान इंडस्ट्री के स्थान से मेल नहीं खा रहा है, कृपया जब आप इंडस्ट्री परिसर में हों तब पुनः प्रयास करें।", t( 'alert.submissionerror.heading' ) );
-            } else if (isAttendanceSubmit) {
-                gui.alert( "You’ve already marked your attendance for the day.", t( 'alert.submissionerror.heading' ) );
             } else {
                 msg = ( msg.length > 0 ) ? msg : t( 'alert.submissionsuccess.msg' );
                 gui.alert( msg, t( 'alert.submissionsuccess.heading' ), level );
