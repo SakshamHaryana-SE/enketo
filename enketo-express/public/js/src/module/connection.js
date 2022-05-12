@@ -152,6 +152,34 @@ function _uploadRecord( record ) {
         }
     }
 
+    // Get Trainee Data
+    let trainerData = {};
+    let domParser = new DOMParser();
+    let parseDoc = domParser.parseFromString(record.xml, 'text/xml');
+    let trainerFormId = parseDoc.getElementById('trainer_login_beta_launch');
+    if(trainerFormId !== null) {
+        let trainerName = parseDoc.getElementsByTagName("trainer_name");
+        let trainerPhoneNumber = parseDoc.getElementsByTagName("trainer_phone_number");
+        let districtName = parseDoc.getElementsByTagName("district_name");
+        let itiName = parseDoc.getElementsByTagName("iti_name");
+        let batch = parseDoc.getElementsByTagName("batch");
+        let tradeName = parseDoc.getElementsByTagName("trade_name");
+        let industryName = parseDoc.getElementsByTagName("industry_name");
+        let locationConfirm = parseDoc.getElementsByTagName("location_confirm");
+        let recordLocation = parseDoc.getElementsByTagName("record_location");
+        let location = recordLocation[0].textContent.split(' ');
+
+        trainerData.trainer_name = trainerName[0].textContent
+        trainerData.trainer_phone_number = trainerPhoneNumber[0].textContent
+        trainerData.district_name = districtName[0].textContent
+        trainerData.iti_name = itiName[0].textContent
+        trainerData.batch = batch[0].textContent
+        trainerData.trade_name = tradeName[0].textContent
+        trainerData.industry_name = industryName[0].textContent
+        trainerData.location_confirm = locationConfirm[0].textContent
+        trainerData.lat = location[0]
+        trainerData.lng = location[1]
+    }
 
 
     /** @type { Promise<UploadBatchResult[]> } */
@@ -164,7 +192,7 @@ function _uploadRecord( record ) {
     // a serious issue with ODK Aggregate (https://github.com/kobotoolbox/enketo-express/issues/400)
     return batches.reduce( ( prevPromise, batch ) => {
         return prevPromise.then( results => {
-            return _uploadBatch( batch, formData, attendanceStatus, traineeDetailStatus, locationDetail ).then( result => {
+            return _uploadBatch( batch, formData, attendanceStatus, traineeDetailStatus, locationDetail, trainerData ).then( result => {
                 results.push( result );
 
                 return results;
@@ -206,7 +234,7 @@ function queryString (obj) {
     return str.join('&');
 };
 
-function _uploadBatch( recordBatch, formData, attendanceStatus, traineeDetailStatus, locationDetail ) {
+function _uploadBatch( recordBatch, formData, attendanceStatus, traineeDetailStatus, locationDetail, trainerData ) {
     // Submission URL is dynamic, because settings.submissionParameter only gets populated after loading form from
     // cache in offline mode.
    // const xmlResponse = parser.parseFromString(form.getDataStr( include ), 'text/xml' );
@@ -302,7 +330,7 @@ function _uploadBatch( recordBatch, formData, attendanceStatus, traineeDetailSta
                 }
                 throw error;
             } );
-    } else {
+    } else if(submissionId === "preFilled") {
         const prefilledSubmissionId = getMeta("formId");
         // Get current month & year
         const d = new Date();
@@ -352,6 +380,53 @@ function _uploadBatch( recordBatch, formData, attendanceStatus, traineeDetailSta
                     const attendanceResponse =  await attendanceRes.json();
                     result.isAttendanceSubmit = (attendanceResponse.hasOwnProperty('code') && attendanceResponse.code === "constraint-violation")
                 }
+
+                if ( response.status === 400 ){
+                    // 400 is a generic error. Any message returned by the server is probably more useful.
+                    // Other more specific statusCodes will get hardcoded and translated messages.
+                    return response.text()
+                        .then( text => {
+                            const xmlResponse = parser.parseFromString( text, 'text/xml' );
+                            if ( xmlResponse ){
+                                const messageEl = xmlResponse.querySelector( 'OpenRosaResponse > message' );
+                                if ( messageEl ) {
+                                    result.message = messageEl.textContent;
+                                }
+                            }
+                            throw result;
+                        } );
+                } else if ( response.status !== 201  && response.status !== 202 ){
+                    return result;
+                } else {
+                    return result;
+                }
+            } )
+            .catch( error => {
+                if ( error.name === 'AbortError' && typeof error.status === 'undefined' ){
+                    error.status = 408;
+                }
+                throw error;
+            } );
+    } else if (submissionId === "trainer") {
+        const addTrainerUrl = `${HASURA_URL}/api/rest/addTrainer`;
+        console.log('addTrainerUrl', addTrainerUrl)
+        console.log('trainerData', trainerData)
+        return fetch( addTrainerUrl, {
+            method: 'POST',
+            cache: 'no-cache',
+            headers: HEADERS,
+            signal: controller.signal,
+            body: JSON.stringify(trainerData)
+        } )
+            .then( async response => {
+
+                const resData = await response.json();
+                console.log('res data', resData);
+                /** @type { UploadBatchResult } */
+                let result = {
+                    status: response.status,
+                    failedFiles: ( recordBatch.failedFiles ) ? recordBatch.failedFiles : undefined,
+                };
 
                 if ( response.status === 400 ){
                     // 400 is a generic error. Any message returned by the server is probably more useful.
