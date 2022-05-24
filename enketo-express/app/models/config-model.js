@@ -333,6 +333,7 @@ module.exports = {
         hasuraEndPoint: config[ 'hasura-end-point' ],
         hasuraAdminSecret: config [ 'hasura-admin-secret' ],
         apiUrl: config [ 'api-url' ],
+        flaskUrl: config [ 'flask-url' ],
         httpBasicUser: config [ 'http-basic-user' ],
         httpBasicPass: config [ 'http-basic-pass' ],
     },

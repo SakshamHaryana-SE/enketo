@@ -14,6 +14,7 @@ import {
 } from './last-saved';
 import gui from "./gui";
 import {fromDer} from "node-forge/lib/asn1";
+import { ITINames, TradeNames, IndustryName, AffiliationType, Districts, Batch } from "./traineeData"
 const bc = new BroadcastChannel('test_channel');
 
 /**
@@ -67,6 +68,7 @@ const MAX_SIZE_URL = ( settings.enketoId ) ? `${settings.basePath}/submission/ma
 const ABSOLUTE_MAX_SIZE = 100 * 1000 * 1000;
 const HASURA_URL = settings.hasuraEndPoint;
 const HASURA_ADMIN_SECRET = settings.hasuraAdminSecret;
+const FLASK_URL = settings.flaskUrl;
 const HEADERS = {
     'Authorization':`Bearer ${HASURA_ADMIN_SECRET}`,
     'Content-Type':'application/json',
@@ -97,7 +99,7 @@ function getOnlineStatus() {
  * @param  { EnketoRecord } record
  * @return { Promise<UploadBatchResult> }
  */
-function _uploadRecord( record ) {
+async function _uploadRecord( record ) {
     let batches;
 
     try {
@@ -125,11 +127,52 @@ function _uploadRecord( record ) {
     let parserString = new DOMParser();
     let document = parserString.parseFromString(record.xml, 'text/xml');
     let attendanceFormId = document.getElementById('DST-Attendance');
+    let traineeRegistration = document.getElementById('trainee_registration');
     if(attendanceFormId !== null) {
         let detailsStatus = doc.getElementsByTagName("details");
         if(detailsStatus.length !== 0) {
             if (detailsStatus[0].textContent === 'No') {
                 traineeDetailStatus = false
+                // Redirect to React with a location
+                console.log("CP-0");
+                traineeId = localStorage.getItem("traineeId");
+                const traineeDetails = await fetch(`${HASURA_URL}/api/rest/trainee/byId?id=${traineeId}`, {headers: HEADERS}).then(res => res.json());
+                const trainee = traineeDetails.trainee[0];
+                const findKeyByValue = (object, valueToFind, defaultValue) => {
+                    for (const [key, value] of Object.entries(object)) {
+                        if(valueToFind === value) return key;
+                    }
+                    return defaultValue;
+                }
+                console.log("test");
+
+                const url = [
+                    `${FLASK_URL}/prefill/traineeRegistration?`,
+                    `reg_id=${trainee.registrationNumber}`,
+                    `&trainee_name=${trainee.name}`,
+                    `&trainee_phone_number=${trainee.phone}`,
+                    `&trainee_gender=${trainee.gender}`,
+                    `&trainee_dob=${trainee.DOB}`,
+                    `&trainee_father_name=${trainee.father}`,
+                    `&trainee_mother_name=${trainee.mother}`,
+                    `&trainee_affiliation=${trainee.affiliationType === 'NCVT'? 1 : 2}`,
+                    `&district_name=${findKeyByValue(Districts, trainee.itiByIti.district, null)}`,
+                    `&iti_name=${findKeyByValue(ITINames, trainee.itiByIti.name, null)}`,
+                    `&batch=2022-2023`,
+                    `&trade_name=${findKeyByValue(ITINames, trainee.tradeName, null)}`,
+                    `&statusFlag=2`,
+                    `&industry_name=${findKeyByValue(IndustryName, trainee.industryByIndustry.name, null)}`
+                ].join("");
+
+                const message = JSON.stringify({
+                    message: traineeId,
+                    url: url, //Additional Param added
+                    loginRes: trainee,
+                    date: Date.now(),
+                    channel: 'traineeDetail'
+                });
+                window.parent.postMessage(message, '*');
+                return;
             } else {
                 traineeDetailStatus = true
             }
@@ -154,6 +197,7 @@ function _uploadRecord( record ) {
 
     // Get Trainee Data
     let trainerData = {};
+    let traineeData = {};
     let domParser = new DOMParser();
     let parseDoc = domParser.parseFromString(record.xml, 'text/xml');
     let trainerFormId = parseDoc.getElementById('trainer_login_beta_launch');
@@ -179,7 +223,45 @@ function _uploadRecord( record ) {
         trainerData.location_confirm = locationConfirm[0].textContent
         trainerData.lat = location[0]
         trainerData.lng = location[1]
-    }
+    }else if(traineeRegistration !== null){
+        // <trainee_name/>
+        // <trainee_phone_number/>
+        // <trainee_gender/>
+        // <trainee_dob/>
+        // <trainee_father_name/>
+        // <trainee_mother_name/>
+        // <trainee_affiliation/>
+        // <district_name/>
+        // <iti_name/>
+        // <batch/>
+        // <trade_name/>
+        // <industry_name/>
+        domParser = new DOMParser();
+        parseDoc = domParser.parseFromString(record.xml, 'text/xml');
+        const itiName = ITINames[parseDoc.getElementsByTagName("iti_name")[0].textContent];
+        const industryName = IndustryName[parseDoc.getElementsByTagName("industry_name")[0].textContent];
+        const regId = parseDoc.getElementsByTagName("reg_id")[0].textContent;
+        const itiDetails = await fetch(`${HASURA_URL}/api/rest/iti?name=${itiName}`, {headers: HEADERS}).then(res => res.json());
+        const industryDetails = await fetch(`${HASURA_URL}/api/rest/getIndustryByName?name=${industryName}`, {headers: HEADERS}).then(res => res.json());
+        const isTraineePresentInDB = await fetch(`${HASURA_URL}/api/rest/trainee/id?reg=${regId}`, {headers: HEADERS}).then(res => res.json());
+        traineeData = {
+            "industry": industryDetails.industry[0].id,
+            "iti": itiDetails.iti[0].id,
+            "DOB": parseDoc.getElementsByTagName("trainee_dob")[0].textContent,
+            "affiliationType": AffiliationType[parseDoc.getElementsByTagName("trainee_affiliation")[0].textContent],
+            "batch": Batch[parseDoc.getElementsByTagName("batch")[0].textContent],
+            "phone": parseDoc.getElementsByTagName("trainee_phone_number")[0].textContent,
+            "father": parseDoc.getElementsByTagName("trainee_father_name")[0].textContent,
+            "mother": parseDoc.getElementsByTagName("trainee_mother_name")[0].textContent,
+            "name": parseDoc.getElementsByTagName("trainee_name")[0].textContent,
+            "tradeName": TradeNames[parseDoc.getElementsByTagName("trade_name")[0].textContent],
+            "gender": parseDoc.getElementsByTagName("trainee_gender")[0].textContent,
+            // "dateOfAdmission": parseDoc.getElementsByTagName("trainee_affiliation"),
+            "registrationNumber": regId,
+            "statusFlag": isTraineePresentInDB.trainee.length > 0 ? 1 : 2,
+        }
+
+    }else{}
 
 
     /** @type { Promise<UploadBatchResult[]> } */
@@ -192,7 +274,7 @@ function _uploadRecord( record ) {
     // a serious issue with ODK Aggregate (https://github.com/kobotoolbox/enketo-express/issues/400)
     return batches.reduce( ( prevPromise, batch ) => {
         return prevPromise.then( results => {
-            return _uploadBatch( batch, formData, attendanceStatus, traineeDetailStatus, locationDetail, trainerData ).then( result => {
+            return _uploadBatch( batch, formData, attendanceStatus, traineeDetailStatus, locationDetail, trainerData, traineeData ).then( result => {
                 results.push( result );
 
                 return results;
@@ -234,13 +316,12 @@ function queryString (obj) {
     return str.join('&');
 };
 
-function _uploadBatch( recordBatch, formData, attendanceStatus, traineeDetailStatus, locationDetail, trainerData ) {
+async function _uploadBatch( recordBatch, formData, attendanceStatus, traineeDetailStatus, locationDetail, trainerData, traineeData ) {
     // Submission URL is dynamic, because settings.submissionParameter only gets populated after loading form from
     // cache in offline mode.
    // const xmlResponse = parser.parseFromString(form.getDataStr( include ), 'text/xml' );
     const submissionUrl = `${HASURA_URL}/api/rest/getTraineeByEnrlAndDob`
     const controller = new AbortController();
-    let traineeData = {}
 
     function getMeta(metaName) {
         return document.querySelector(`meta[name=${metaName}]`).content;
@@ -275,49 +356,71 @@ function _uploadBatch( recordBatch, formData, attendanceStatus, traineeDetailSta
                         id: formData.registrationNumber,
                         dob: formData.dob
                     }
-                    const traineeLoginUrl = `${API_URL}/dst/trainee/loginOrRegister?${await queryString(traineeParams)}`;
-                    const traineeLoginRes = await fetch(traineeLoginUrl, {
-                        method: 'GET',
-                        cache: 'no-cache',
-                        headers:  {
-                            'Authorization':`Basic ${window.btoa(unescape(encodeURIComponent( `${HTTP_BASIC_USER}:${HTTP_BASIC_PASS}` )))}`,
-                            'Content-Type':'application/json',
-                        },
-                    });
-                    const responseOfTrainee = await traineeLoginRes.json();
-                    const { resp: { params: { status, errMsg } } } = responseOfTrainee;
-                    if (status === 'Success') {
-                        const message = JSON.stringify({
-                            message: resData.trainee[0],
-                            loginRes: responseOfTrainee,
-                            date: Date.now(),
-                            channel: 'enketo'
-                        });
-                        result.isTraineeLogin = true;
-                        localStorage.setItem("industryId", resData.trainee[0].industry);
-                        localStorage.setItem("traineeId", resData.trainee[0].id);
-                        window.parent.postMessage(message, '*');
-                    } else {
-                        result.isTraineeLogin = false;
-                        result.errorMsg = errMsg;
-                    }
+                    const traineeId = resData.trainee[0].id;
+                    const traineeDetails = await fetch(`${HASURA_URL}/api/rest/trainee/byId?id=${traineeId}`, {headers: HEADERS}).then(res => res.json());
+                    const trainee = traineeDetails.trainee[0];
+                    const message = JSON.stringify({
+                                message: resData.trainee[0],
+                                loginRes: trainee,
+                                date: Date.now(),
+                                channel: 'enketo'
+                            });
+                    result.isTraineeLogin = true;
+                    localStorage.setItem("industryId", resData.trainee[0].industry);
+                    localStorage.setItem("traineeId", resData.trainee[0].id);
+                    window.parent.postMessage(message, '*');
+                    // const traineeLoginUrl = `${API_URL}/dst/trainee/loginOrRegister?${await queryString(traineeParams)}`;
+                    // const traineeLoginRes = await fetch(traineeLoginUrl, {
+                    //     method: 'GET',
+                    //     cache: 'no-cache',
+                    //     headers:  {
+                    //         'Authorization':`Basic ${window.btoa(unescape(encodeURIComponent( `${HTTP_BASIC_USER}:${HTTP_BASIC_PASS}` )))}`,
+                    //         'Content-Type':'application/json',
+                    //     },
+                    // });
+                    // const responseOfTrainee = await traineeLoginRes.json();
+                    // const { resp: { params: { status, errMsg } } } = responseOfTrainee;
+                    // if (status === 'Success') {
+                    //     const message = JSON.stringify({
+                    //         message: resData.trainee[0],
+                    //         loginRes: responseOfTrainee,
+                    //         date: Date.now(),
+                    //         channel: 'enketo'
+                    //     });
+                    //     result.isTraineeLogin = true;
+                    //     localStorage.setItem("industryId", resData.trainee[0].industry);
+                    //     localStorage.setItem("traineeId", resData.trainee[0].id);
+                    //     window.parent.postMessage(message, '*');
+                    // } else {
+                    //     result.isTraineeLogin = false;
+                    //     result.errorMsg = errMsg;
+                    // }
                 }
 
 
-                if ( response.status === 400 ){
+                if ( response.status === 400 || resData.trainee.length === 0 ){
                     // 400 is a generic error. Any message returned by the server is probably more useful.
                     // Other more specific statusCodes will get hardcoded and translated messages.
-                    return response.text()
-                        .then( text => {
-                            const xmlResponse = parser.parseFromString( text, 'text/xml' );
-                            if ( xmlResponse ){
-                                const messageEl = xmlResponse.querySelector( 'OpenRosaResponse > message' );
-                                if ( messageEl ) {
-                                    result.message = messageEl.textContent;
-                                }
-                            }
-                            throw result;
-                        } );
+                    const message = JSON.stringify({
+                        message: null,
+                        url: null, //Additional Param added
+                        loginRes: null,
+                        date: Date.now(),
+                        channel: 'traineeDetail'
+                    });
+                    window.parent.postMessage(message, '*');
+                    return;
+                    // return response.text()
+                    //     .then( text => {
+                    //         const xmlResponse = parser.parseFromString( text, 'text/xml' );
+                    //         if ( xmlResponse ){
+                    //             const messageEl = xmlResponse.querySelector( 'OpenRosaResponse > message' );
+                    //             if ( messageEl ) {
+                    //                 result.message = messageEl.textContent;
+                    //             }
+                    //         }
+                    //         throw result;
+                    //     } );
                 } else if ( response.status !== 201  && response.status !== 202 ){
                     return result;
                 } else {
@@ -417,6 +520,51 @@ function _uploadBatch( recordBatch, formData, attendanceStatus, traineeDetailSta
             headers: HEADERS,
             signal: controller.signal,
             body: JSON.stringify(trainerData)
+        } )
+            .then( async response => {
+
+                const resData = await response.json();
+                console.log('res data', resData);
+                /** @type { UploadBatchResult } */
+                let result = {
+                    status: response.status,
+                    failedFiles: ( recordBatch.failedFiles ) ? recordBatch.failedFiles : undefined,
+                };
+
+                if ( response.status === 400 ){
+                    // 400 is a generic error. Any message returned by the server is probably more useful.
+                    // Other more specific statusCodes will get hardcoded and translated messages.
+                    return response.text()
+                        .then( text => {
+                            const xmlResponse = parser.parseFromString( text, 'text/xml' );
+                            if ( xmlResponse ){
+                                const messageEl = xmlResponse.querySelector( 'OpenRosaResponse > message' );
+                                if ( messageEl ) {
+                                    result.message = messageEl.textContent;
+                                }
+                            }
+                            throw result;
+                        } );
+                } else if ( response.status !== 201  && response.status !== 202 ){
+                    return result;
+                } else {
+                    return result;
+                }
+            } )
+            .catch( error => {
+                if ( error.name === 'AbortError' && typeof error.status === 'undefined' ){
+                    error.status = 408;
+                }
+                throw error;
+            } );
+    }if(submissionId === "traineeRegistration"){
+        const upsertTrainee = `${HASURA_URL}/api/rest/trainee`;
+        return fetch( `${upsertTrainee}`, {
+            method: 'POST',
+            cache: 'no-cache',
+            headers: HEADERS,
+            signal: controller.signal,
+            body: JSON.stringify({trainee: traineeData})
         } )
             .then( async response => {
 

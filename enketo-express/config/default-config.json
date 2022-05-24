@@ -63,12 +63,12 @@
     "query parameter to pass to submission": "",
     "redis": {
         "main": {
-            "host": "127.0.0.1",
+            "host": "0.0.0.0",
             "port": "6379",
             "password": null
         },
         "cache": {
-            "host": "127.0.0.1",
+            "host": "0.0.0.0",
             "port": "6380",
             "password": null
         }

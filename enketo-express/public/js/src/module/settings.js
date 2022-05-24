@@ -27,6 +27,7 @@ settings.loginUrl = config[ 'basePath' ] + DEFAULT_LOGIN_URL;
 settings.hasuraEndPoint = config [ 'hasuraEndPoint' ];
 settings.hasuraAdminSecret = config [ 'hasuraAdminSecret' ];
 settings.apiUrl = config [ 'apiUrl' ];
+settings.flaskUrl = config [ 'flaskUrl' ];
 settings.httpBasicUser = config [ 'httpBasicUser' ];
 settings.httpBasicPass = config [ 'httpBasicPass' ];
 

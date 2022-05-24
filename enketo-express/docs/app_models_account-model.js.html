@@ -170,20 +170,24 @@ function _stripProtocol( url ) {
  * @return { AccountObj } {@link module:account-model~AccountObj|Account object}
  */
 function _getAccount( serverUrl ) {
+    console.error( serverUrl );
+    
     const hardcodedAccount = _getHardcodedAccount();
+    
+    return Promise.resolve( hardcodedAccount );
 
-    if ( _isAllowed( hardcodedAccount, serverUrl ) ) {
-        return Promise.resolve( hardcodedAccount );
-    }
+    // if ( _isAllowed( hardcodedAccount, serverUrl ) ) {
+    //     return Promise.resolve( hardcodedAccount );
+    // }
 
-    if ( customGetAccount ) {
-        return customGetAccount( serverUrl, config[ 'account api url' ] );
-    }
+    // if ( customGetAccount ) {
+    //     return customGetAccount( serverUrl, config[ 'account api url' ] );
+    // }
 
-    const error = new Error( 'Forbidden. This server is not linked with Enketo.' );
-    error.status = 403;
+    // const error = new Error( 'Forbidden. This server is not linked with Enketo.' );
+    // error.status = 403;
 
-    return Promise.reject( error );
+    // return Promise.reject( error );
 }
 
 /**
