@@ -590,10 +590,33 @@ async function _uploadBatch( recordBatch, formData, attendanceStatus, traineeDet
                             }
                             throw result;
                         } );
-                } else if ( response.status !== 201  && response.status !== 202 ){
-                    return result;
+                } else if ( response.status===200 ){
+                    // Add Hook to verify if registered correctly
+                    const traineeParams = {
+                        id: formData.registrationNumber,
+                        dob: formData.dob
+                    }
+                    const traineeId = resData.insert_trainee_one.id;
+                    const traineeDetails = await fetch(`${HASURA_URL}/api/rest/trainee/byId?id=${traineeId}`, {headers: HEADERS}).then(res => res.json());
+                    const trainee = traineeDetails.trainee[0];
+                    const message = JSON.stringify({
+                        traineeId: resData.insert_trainee_one.id,
+                        user: trainee,
+                        isRegistered: true,
+                        date: Date.now(),
+                        channel: 'traineeRegistration'
+                    });
+                    window.parent.postMessage(message, '*');
+                    return;
                 } else {
-                    return result;
+                    const message = JSON.stringify({
+                        traineeId: null,
+                        loginRes: trainee,
+                        isRegistered: false,
+                        date: Date.now(),
+                        channel: 'traineeRegistration'
+                    });
+                    window.parent.postMessage(message, '*');
                 }
             } )
             .catch( error => {
