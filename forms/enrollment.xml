@@ -19,9 +19,7 @@
                 </data>
             </instance>
             <bind nodeset="/data/did" type="string"/>
-            <bind constraint="regex(., '^[a-zA-Z0-9]{15}$')"
-                  jr:constraintMsg="अपना registeration number चैक कीजिये. Registeration number 15 डिजिट का होना चाहिए"
-                  nodeset="/data/validation/reg_no" required="true()" type="string"/>
+            <bind nodeset="/data/validation/reg_no" required="true()" type="string"/>
             <bind jr:constraintMsg="Date of Birth does not match with the registration number
 (आपका date of birth आपके registration number से मैच नहीं करता है, कृपया दौबारा प्रयास करे।)"
                   nodeset="/data/validation/dob" required="true()" type="date"/>

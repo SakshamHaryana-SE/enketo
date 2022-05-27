@@ -202,6 +202,13 @@ async function _uploadRecord( record ) {
     let parseDoc = domParser.parseFromString(record.xml, 'text/xml');
     let trainerFormId = parseDoc.getElementById('trainer_login_beta_launch');
     if(trainerFormId !== null) {
+        const findKeyByValue = (object, valueToFind, defaultValue) => {
+            for (const [key, value] of Object.entries(object)) {
+                if(valueToFind === key) return value;
+            }
+            return defaultValue;
+        }
+
         let trainerName = parseDoc.getElementsByTagName("trainer_name");
         let trainerPhoneNumber = parseDoc.getElementsByTagName("trainer_phone_number");
         let districtName = parseDoc.getElementsByTagName("district_name");
@@ -215,11 +222,11 @@ async function _uploadRecord( record ) {
 
         trainerData.trainer_name = trainerName[0].textContent
         trainerData.trainer_phone_number = trainerPhoneNumber[0].textContent
-        trainerData.district_name = districtName[0].textContent
-        trainerData.iti_name = itiName[0].textContent
-        trainerData.batch = batch[0].textContent
-        trainerData.trade_name = tradeName[0].textContent
-        trainerData.industry_name = industryName[0].textContent
+        trainerData.district_name = `${findKeyByValue(Districts, districtName[0].textContent, null)}`
+        trainerData.iti_name = `${findKeyByValue(ITINames, itiName[0].textContent, null)}`
+        trainerData.batch = `${findKeyByValue(Batch, batch[0].textContent, null)}`
+        trainerData.trade_name = `${findKeyByValue(TradeNames, tradeName[0].textContent, null)}`
+        trainerData.industry_name = `${findKeyByValue(IndustryName, industryName[0].textContent, null)}`
         trainerData.location_confirm = locationConfirm[0].textContent
         trainerData.lat = location[0]
         trainerData.lng = location[1]
