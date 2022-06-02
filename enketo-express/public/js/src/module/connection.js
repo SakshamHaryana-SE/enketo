@@ -4,7 +4,7 @@
 
 import encryptor from './encryptor';
 import settings from './settings';
-import { t } from './translator';
+import {t} from './translator';
 import utils from './utils';
 import {
     getLastSavedRecord,
@@ -12,9 +12,8 @@ import {
     populateLastSavedInstances,
     setLastSavedRecord,
 } from './last-saved';
-import gui from "./gui";
-import {fromDer} from "node-forge/lib/asn1";
-import { ITINames, TradeNames, IndustryName, AffiliationType, Districts, Batch } from "./traineeData"
+import {AbsenceReason, AffiliationType, Batch, Districts, IndustryName, ITINames, TradeNames} from "./traineeData"
+
 const bc = new BroadcastChannel('test_channel');
 
 /**
@@ -76,6 +75,15 @@ const HEADERS = {
 const API_URL = settings.apiUrl;
 const HTTP_BASIC_USER = settings.httpBasicUser;
 const HTTP_BASIC_PASS = settings.httpBasicPass;
+const MINIO = {
+    LOGIN_ID: settings.loginId,
+    MINIO_PASSWORD: settings.minioPassword,
+    APPLICATION_ID: settings.applicationId,
+    HEADER_AUTH_TOKEN: settings.headerAuthToken,
+    BUCKET_ID: settings.bucketId,
+    LOGIN_URL: settings.loginApi,
+    HOST: settings.host
+}
 
 
 /**
@@ -92,6 +100,77 @@ function getOnlineStatus() {
         .then( text => /connected/.test( text ) )
         .catch( () => false );
 }
+
+const getLoginToken = () => {
+    try {
+        let logToken;
+
+        let postData = {
+            loginId: MINIO.LOGIN_ID,
+            password: MINIO.MINIO_PASSWORD,
+            applicationId: MINIO.APPLICATION_ID,
+        };
+
+        let header = {
+            'content-type': 'application/json',
+            Authorization: MINIO.HEADER_AUTH_TOKEN,
+        };
+
+        return fetch( MINIO.LOGIN_URL, {
+            method: 'POST',
+            cache: 'no-cache',
+            headers: header,
+            body: JSON.stringify(postData)
+        } )
+            .then( async (res) => {
+                const resData = await res.json();
+                logToken = resData.token;
+
+                return logToken;
+            }).catch((err) => {
+                throw { message: `Login Token error: ${err}` };
+            });
+
+    } catch (err) {
+        console.log('Error', err);
+        throw err;
+    }
+};
+
+const getSessionToken = async (logToken) => {
+    let accesskey;
+    let secretkey;
+    let sessionToken;
+
+    try {
+        let bucketId = MINIO.BUCKET_ID;
+
+        return fetch( `https://${MINIO.HOST}/minio/${bucketId}/?Action=AssumeRoleWithWebIdentity&DurationSeconds=36000&WebIdentityToken=${logToken}&Version=2011-06-15`, {
+            method: 'POST',
+            cache: 'no-cache'
+        } )
+            .then( async (res) => {
+                const resData = await res.text()
+                let parser = new DOMParser();
+                let doc = parser.parseFromString(resData, 'text/xml');
+                accesskey = doc.getElementsByTagName("AccessKeyId")[0].textContent;
+                secretkey =  doc.getElementsByTagName("SecretAccessKey")[0].textContent;
+                sessionToken = doc.getElementsByTagName("SessionToken")[0].textContent;
+
+                return {
+                    accessKey: accesskey,
+                    secretKey: secretkey,
+                    sessionToken: sessionToken,
+                };
+            }).catch((err) => {
+                throw { message: `Session Token error: ${err}` };
+            });
+    } catch (err) {
+       console.log(err);
+        throw err;
+    }
+};
+
 
 /**
  * Uploads a complete record
@@ -121,7 +200,10 @@ async function _uploadRecord( record ) {
 
     // Add aatendance
     // Get form data
-    let attendanceStatus = false;
+    let attendanceDetail = {
+        attendanceStatus: false,
+        absenceReason: ''
+    };
     let locationDetail = true;
     let traineeDetailStatus = false;
     let parserString = new DOMParser();
@@ -185,13 +267,43 @@ async function _uploadRecord( record ) {
                 locationDetail = true;
             }
         }
+        const findKeyByValue = (object, valueToFind, defaultValue) => {
+            for (const [key, value] of Object.entries(object)) {
+                if(valueToFind === key) return value;
+            }
+            return defaultValue;
+        }
+
         let attendance = doc.getElementsByTagName("attendance_status");
+        let absence_reason = doc.getElementsByTagName("absence_rsn");
         if(attendance.length !== 0) {
             if(attendance[0].textContent === 'Present') {
-                attendanceStatus = true;
+                attendanceDetail.attendanceStatus = true;
             } else {
-                attendanceStatus = false;
+                if(absence_reason[0].textContent === 6) {
+                    attendanceDetail.absenceReason = doc.getElementsByTagName("if_other");
+                } else {
+                    attendanceDetail.absenceReason = `${findKeyByValue(AbsenceReason, absence_reason[0].textContent, null)}`
+                }
+                attendanceDetail.attendanceStatus = false;
             }
+        }
+
+        let selfie = doc.getElementsByTagName("selfie");
+        if(selfie.length !== 0) {
+            const tokenRes = await getLoginToken();
+            const sessionRes = await getSessionToken(tokenRes);
+            sessionRes.file = selfie[1].textContent;
+           await fetch( 'http://localhost:8005/submission/uploadImage', {
+                method: 'POST',
+               headers: {
+                   'Content-Type': 'application/json',
+               },
+                body: JSON.stringify(sessionRes)
+            } )
+                .then( async response => {
+                   console.log('response of minio url', response);
+                })
         }
     }
 
@@ -281,7 +393,7 @@ async function _uploadRecord( record ) {
     // a serious issue with ODK Aggregate (https://github.com/kobotoolbox/enketo-express/issues/400)
     return batches.reduce( ( prevPromise, batch ) => {
         return prevPromise.then( results => {
-            return _uploadBatch( batch, formData, attendanceStatus, traineeDetailStatus, locationDetail, trainerData, traineeData ).then( result => {
+            return _uploadBatch( batch, formData, attendanceDetail, traineeDetailStatus, locationDetail, trainerData, traineeData ).then( result => {
                 results.push( result );
 
                 return results;
@@ -323,7 +435,7 @@ function queryString (obj) {
     return str.join('&');
 };
 
-async function _uploadBatch( recordBatch, formData, attendanceStatus, traineeDetailStatus, locationDetail, trainerData, traineeData ) {
+async function _uploadBatch( recordBatch, formData, attendanceDetail, traineeDetailStatus, locationDetail, trainerData, traineeData ) {
     // Submission URL is dynamic, because settings.submissionParameter only gets populated after loading form from
     // cache in offline mode.
    // const xmlResponse = parser.parseFromString(form.getDataStr( include ), 'text/xml' );
@@ -473,11 +585,14 @@ async function _uploadBatch( recordBatch, formData, attendanceStatus, traineeDet
                 // Attendance submit
                 if(result.isIndustry && prefilledSubmissionId === 'preFilled' && traineeDetailStatus && locationDetail) {
                     // Attendance submit
+                    var today = new Date();
+                    var attendanceDate = (today.getMonth()+1)+'-'+today.getDate() +'-'+today.getFullYear();
                     const attendanceData = {
                         industry_id: parseInt(localStorage.getItem("industryId")),
                         trainee_id: parseInt(localStorage.getItem("traineeId")),
-                        date: new Date(),
-                        is_present: attendanceStatus
+                        date: attendanceDate,
+                        is_present: attendanceDetail.attendanceStatus,
+                        absence_reason: attendanceDetail.absenceReason
                     }
                     const attendanceUrl = `${HASURA_URL}/api/rest/addAttendance`
                     const attendanceRes = await fetch(attendanceUrl, {
@@ -488,7 +603,7 @@ async function _uploadBatch( recordBatch, formData, attendanceStatus, traineeDet
                         body: JSON.stringify(attendanceData)
                     });
                     const attendanceResponse =  await attendanceRes.json();
-                    result.isAttendanceSubmit = (attendanceResponse.hasOwnProperty('code') && attendanceResponse.code === "constraint-violation")
+                    result.isAttendanceSubmit = (attendanceResponse.hasOwnProperty('code') && attendanceResponse.code === "constraint-violation" || attendanceResponse.code === "validation-failed")
                 }
 
                 if ( response.status === 400 ){

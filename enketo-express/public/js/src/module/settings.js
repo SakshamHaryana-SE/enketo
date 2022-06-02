@@ -30,6 +30,13 @@ settings.apiUrl = config [ 'apiUrl' ];
 settings.flaskUrl = config [ 'flaskUrl' ];
 settings.httpBasicUser = config [ 'httpBasicUser' ];
 settings.httpBasicPass = config [ 'httpBasicPass' ];
+settings.loginId = config ['minioConfig'] ['loginId'],
+settings.minioPassword = config ['minioConfig'] ['minioPassword'],
+settings.applicationId = config ['minioConfig'] ['applicationId'],
+settings.headerAuthToken=config ['minioConfig'] ['headerAuthToken'] ,
+settings.loginApi= config ['minioConfig'] ['loginApi']
+settings.bucketId= config ['minioConfig'] ['bucketId']
+settings.host= config ['minioConfig'] ['host']
 
 // add default return Url
 settings.defaultReturnUrl = config[ 'basePath' ] + DEFAULT_THANKS_URL;

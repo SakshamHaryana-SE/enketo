@@ -12,8 +12,12 @@ const request = require( 'request' );
 const express = require( 'express' );
 const router = express.Router();
 const routerUtils = require( '../lib/router-utils' );
+const Minio = require("minio");
+var fs = require('fs');
+const {server: config} = require("../models/config-model");
 // var debug = require( 'debug' )( 'submission-controller' );
-
+const multer  = require('multer')
+const upload = multer({ dest: 'images/' })
 module.exports = app => {
     app.use( `${app.get( 'base path' )}/submission`, router );
 };
@@ -30,6 +34,7 @@ router
     .get( '/max-size/:encrypted_enketo_id_single', maxSize )
     .get( '/max-size/:encrypted_enketo_id_view', maxSize )
     .get( '/max-size/:enketo_id?', maxSize )
+    .post('/uploadImage', uploadMinioImage)
     .get( '/:encrypted_enketo_id_view', getInstance )
     .get( '/:enketo_id', getInstance )
     .post( '/:encrypted_enketo_id_single', submit )
@@ -105,6 +110,52 @@ function submit( req, res, next ) {
         .catch( next );
 }
 
+function uploadFiles(req, res) {
+    console.log(req.body);
+    console.log(req.files);
+    res.json({ message: "Successfully uploaded files" });
+}
+
+function uploadMinioImage( req, res, next ) {
+try {
+    console.log('call upload image', req.body.file);
+
+    app.post("/", upload.single(req.body.file), uploadFiles);
+
+    const {accessKey, secretKey, sessionToken, file} = req.body;
+    let minioClient = new Minio.Client({
+        endPoint: config['minioConfig']['host'],
+        port: 9000,
+        useSSL: false,
+        accessKey,
+        secretKey,
+        sessionToken,
+    });
+    console.log('minioClient', minioClient)
+    let metaData = {
+        'Content-Type': 'application/pdf',
+    };
+    let imageUrl = minioClient.presignedUrl(
+        'GET',
+        config['minioConfig']['bucketId'],
+        'enketo',
+        1000,
+        {
+            versionId: minioClient.fPutObject(
+                config['minioConfig']['bucketId'],
+                'enketo',
+                file,
+                metaData
+            ).etag,
+        }
+    );
+    console.log('imageUrl---', imageUrl);
+    return imageUrl;
+} catch (e) {
+
+}
+}
+
 /**
  * Get max submission size.
  *
@@ -113,6 +164,7 @@ function submit( req, res, next ) {
  * @param {Function} next - Express callback
  */
 function maxSize( req, res, next ) {
+    console.log('Call maxsize')
     if ( req.query.xformUrl ) {
         // Non-standard way of attempting to obtain max submission size from XForm url directly
         communicator.getMaxSize( {

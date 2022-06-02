@@ -797,3 +797,11 @@ export const Batch = {
     121: "2021-2023",
     122: "2020-2022",
 };
+
+export const AbsenceReason = {
+    1: "Sick leave",
+    2: "Transport unavailable",
+    3: "Personal emergency",
+    4: "Industry is not providing OJT",
+    5: "At ITI"
+}

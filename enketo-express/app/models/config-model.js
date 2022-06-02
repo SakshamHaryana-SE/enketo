@@ -336,6 +336,15 @@ module.exports = {
         flaskUrl: config [ 'flask-url' ],
         httpBasicUser: config [ 'http-basic-user' ],
         httpBasicPass: config [ 'http-basic-pass' ],
+        minioConfig: {
+            loginId: config ['minio'] ['login-id'],
+            minioPassword: config ['minio'] ['minio-password'],
+            applicationId: config ['minio'] ['application-id'],
+            headerAuthToken:config ['minio'] ['header-auth-token'] ,
+            loginApi: config ['minio'] ['login-api'],
+            bucketId: config ['minio'] ['bucket-id'],
+            host: config ['minio'] ['host']
+        }
     },
     getThemesSupported
 };
