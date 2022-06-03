@@ -14,13 +14,33 @@ const router = express.Router();
 const routerUtils = require( '../lib/router-utils' );
 const Minio = require("minio");
 var fs = require('fs');
+const multer  = require('multer')
 const {server: config} = require("../models/config-model");
 // var debug = require( 'debug' )( 'submission-controller' );
-const multer  = require('multer')
-const upload = multer({ dest: 'images/' })
+const file = '/home/usr-lp-11/Work/Projectes/enketo/enketo-express/app/images/test/no-profile1.png'
+
 module.exports = app => {
+    app.use(express.static(`${__dirname}/images`));
     app.use( `${app.get( 'base path' )}/submission`, router );
 };
+
+const multerStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'images');
+    },
+    filename: (req, file, cb) => {
+        const ext = file.file.split('/')[1];
+        console.log('extension', ext, file);
+        const id = `902766d3-8c45-4e5a-84ac-33389e0f843e`;
+        const filePath = `test/${id}${ext}`
+        cb(null, filePath);
+    },
+});
+
+const upload = multer({
+    storage: multerStorage
+});
+
 
 router.param( 'enketo_id', routerUtils.enketoId );
 router.param( 'encrypted_enketo_id_single', routerUtils.encryptedEnketoIdSingle );
@@ -34,6 +54,7 @@ router
     .get( '/max-size/:encrypted_enketo_id_single', maxSize )
     .get( '/max-size/:encrypted_enketo_id_view', maxSize )
     .get( '/max-size/:enketo_id?', maxSize )
+    // .post('/multerUploadImage', upload.single('file'), multerUploadImage)
     .post('/uploadImage', uploadMinioImage)
     .get( '/:encrypted_enketo_id_view', getInstance )
     .get( '/:enketo_id', getInstance )
@@ -110,21 +131,23 @@ function submit( req, res, next ) {
         .catch( next );
 }
 
-function uploadFiles(req, res) {
-    console.log(req.body);
-    console.log(req.files);
-    res.json({ message: "Successfully uploaded files" });
-}
+/*function multerUploadImage(req, res, next) {
+   console.log('reqqq multer upload image', req.file)
+}*/
 
-function uploadMinioImage( req, res, next ) {
+async function uploadMinioImage( req, res, next ) {
 try {
-    console.log('call upload image', req.body.file);
+    console.log('Call upload image');
+    /*const app = express();
+    app.post("/upload", upload.single('avatar'), (req, res) => {
+        // Stuff to be added later
+        console.log('req.file', req.file);
+        return res.json({status: 'OK', uploaded: '100'});
+    });*/
 
-    app.post("/", upload.single(req.body.file), uploadFiles);
-
-    const {accessKey, secretKey, sessionToken, file} = req.body;
+    const {accessKey, secretKey, sessionToken} = req.body;
     let minioClient = new Minio.Client({
-        endPoint: config['minioConfig']['host'],
+        endPoint: config['minio']['host'],
         port: 9000,
         useSSL: false,
         accessKey,
@@ -133,26 +156,26 @@ try {
     });
     console.log('minioClient', minioClient)
     let metaData = {
-        'Content-Type': 'application/pdf',
+        'Content-Type': 'png/image',
     };
     let imageUrl = minioClient.presignedUrl(
         'GET',
-        config['minioConfig']['bucketId'],
+        config['minio']['bucket-id'],
         'enketo',
         1000,
         {
             versionId: minioClient.fPutObject(
-                config['minioConfig']['bucketId'],
+                config['minio']['bucket-id'],
                 'enketo',
                 file,
                 metaData
             ).etag,
         }
     );
-    console.log('imageUrl---', imageUrl);
-    return imageUrl;
+    const imageResUrl = await imageUrl;
+    res.json( { url: imageResUrl } );
 } catch (e) {
-
+console.log('error', e);
 }
 }
 

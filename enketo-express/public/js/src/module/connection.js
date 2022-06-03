@@ -294,6 +294,17 @@ async function _uploadRecord( record ) {
             const tokenRes = await getLoginToken();
             const sessionRes = await getSessionToken(tokenRes);
             sessionRes.file = selfie[1].textContent;
+            // Upload file using multer
+           /* await fetch( 'http://localhost:8005/submission/multerUploadImage', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({file: selfie[1].textContent})
+            } )
+                .then( async response => {
+                    console.log('response of minio url', response);
+                })*/
            await fetch( 'http://localhost:8005/submission/uploadImage', {
                 method: 'POST',
                headers: {
@@ -302,7 +313,8 @@ async function _uploadRecord( record ) {
                 body: JSON.stringify(sessionRes)
             } )
                 .then( async response => {
-                   console.log('response of minio url', response);
+                    const imageUploadRes = await response.json();
+                    attendanceDetail.selfie = imageUploadRes.url;
                 })
         }
     }
@@ -592,7 +604,8 @@ async function _uploadBatch( recordBatch, formData, attendanceDetail, traineeDet
                         trainee_id: parseInt(localStorage.getItem("traineeId")),
                         date: attendanceDate,
                         is_present: attendanceDetail.attendanceStatus,
-                        absence_reason: attendanceDetail.absenceReason
+                        absence_reason: attendanceDetail.absenceReason,
+                        selfie: attendanceDetail.selfie
                     }
                     const attendanceUrl = `${HASURA_URL}/api/rest/addAttendance`
                     const attendanceRes = await fetch(attendanceUrl, {
