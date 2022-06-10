@@ -82,6 +82,7 @@
         "request-filtering-agent": "^1.0.7",
         "serve-favicon": "^2.5.0",
         "time-grunt": "^2.0.0",
+        "uuid": "^8.3.2",
         "valid-url": "^1.0.9",
         "vex-dialog-enketo": "github:enketo/vex-dialog-enketo#b6e0f01",
         "vex-js": "^4.1.0",

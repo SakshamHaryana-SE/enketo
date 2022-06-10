@@ -19,6 +19,7 @@ const { server: config } = require("../models/config-model");
 const xml2js = require('xml2js');
 // var debug = require( 'debug' )( 'submission-controller' );
 const file = '/home/usr-lp-11/Work/Projectes/enketo/enketo-express/app/images/test/no-profile1.png'
+const { v4: uuidv4 } = require('uuid');
 
 module.exports = app => {
     app.use(express.static(`${__dirname}/images`));
@@ -138,16 +139,18 @@ function submit(req, res, next) {
 }*/
 async function minioFileUpload(req, res, next) {
     try {
+        let base64Data = req.body.image;
+        const extension = base64Data.substring("data:image/".length, base64Data.indexOf(";base64"))
+        base64Data = base64Data.replace(/^data:image\/(png|jpeg|jpg);base64,/, "");
 
-        const base64Data = req.body.image.replace(/^data:image\/png;base64,/, "");
-        // const fileName = new Date().getTime();
-        const fileName = 'out';
-        const filePath = `public/images/${fileName}.png`;
+        const fileName = uuidv4() + `.${extension}`;
+        const filePath = `public/images/${fileName}`;
         fs.writeFileSync(filePath, base64Data, 'base64');
         const tokenRes = await getLoginToken();
         // console.log('----', tokenRes)
         const sessionRes = await getSessionToken(tokenRes);
-        // console.log('**************',sessionRes);
+        console.log('**************', sessionRes);
+        console.log('-----'.fileName);
 
         const minioClient = new Minio.Client({
             endPoint: "cdn.samagra.io",
@@ -158,31 +161,35 @@ async function minioFileUpload(req, res, next) {
         });
 
         const metaData = {
-            "Content-Type": "png/image",
+            "Content-Type": `${extension}/image`,
         };
 
         const imageResponse = await new Promise((resolve, reject) => {
             minioClient.fPutObject(
                 config['minio']['bucket-id'],
-                "test-image.png",
+                fileName,
                 filePath,
                 metaData,
                 function (err, objInfo) {
-                  if (err) {
-                    return reject(err);
-                  }
-                  console.log("Success", objInfo);
-                  resolve(objInfo)
+                    if (err) {
+                        return reject(err);
+                    }
+                    console.log("Success", objInfo);
+                    // removing local file
+                    fs.unlinkSync(filePath);
+                    resolve(objInfo)
                 }
             );
         });
 
-        res.json({ status: 'success', data: imageResponse });
+        const imageURl = `https://cdn.samagra.io/${config['minio']['bucket-id']}/${fileName}`;
+
+        res.json({ status: 'success', data: imageURl });
     } catch (err) {
         console.log('Error', err);
         throw err;
     }
-} 
+}
 
 const getLoginToken = () => {
     try {
@@ -230,7 +237,7 @@ const getSessionToken = async (logToken) => {
         HOST: config['minio']['host']
     };
 
-  
+
     try {
         let bucketId = MINIO.BUCKET_ID;
         const options = {
@@ -245,19 +252,19 @@ const getSessionToken = async (logToken) => {
                 }
                 let parser = new xml2js.Parser();
                 let doc = await parser.parseStringPromise(body);
-                
-                if (doc && doc.AssumeRoleWithWebIdentityResponse && 
-                    doc.AssumeRoleWithWebIdentityResponse.AssumeRoleWithWebIdentityResult && 
-                    doc.AssumeRoleWithWebIdentityResponse.AssumeRoleWithWebIdentityResult.length && 
+
+                if (doc && doc.AssumeRoleWithWebIdentityResponse &&
+                    doc.AssumeRoleWithWebIdentityResponse.AssumeRoleWithWebIdentityResult &&
+                    doc.AssumeRoleWithWebIdentityResponse.AssumeRoleWithWebIdentityResult.length &&
                     doc.AssumeRoleWithWebIdentityResponse.AssumeRoleWithWebIdentityResult[0].Credentials &&
                     doc.AssumeRoleWithWebIdentityResponse.AssumeRoleWithWebIdentityResult[0].Credentials.length) {
-                        const creds = doc.AssumeRoleWithWebIdentityResponse.AssumeRoleWithWebIdentityResult[0].Credentials[0];
-                        
-                        return resolve({
-                            accessKey: creds.AccessKeyId[0],
-                            secretKey: creds.SecretAccessKey[0],
-                            sessionToken: creds.SessionToken[0],
-                        });
+                    const creds = doc.AssumeRoleWithWebIdentityResponse.AssumeRoleWithWebIdentityResult[0].Credentials[0];
+
+                    return resolve({
+                        accessKey: creds.AccessKeyId[0],
+                        secretKey: creds.SecretAccessKey[0],
+                        sessionToken: creds.SessionToken[0],
+                    });
                 }
                 reject("Body error");
             })
@@ -285,7 +292,7 @@ const getSessionToken = async (logToken) => {
                 throw { message: `Session Token error: ${err}` };
             }); */
     } catch (err) {
-       console.log(err);
+        console.log(err);
         throw err;
     }
 };

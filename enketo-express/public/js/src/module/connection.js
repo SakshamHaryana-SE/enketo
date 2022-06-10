@@ -4,7 +4,7 @@
 
 import encryptor from './encryptor';
 import settings from './settings';
-import {t} from './translator';
+import { t } from './translator';
 import utils from './utils';
 import {
     getLastSavedRecord,
@@ -12,7 +12,7 @@ import {
     populateLastSavedInstances,
     setLastSavedRecord,
 } from './last-saved';
-import {AbsenceReason, AffiliationType, Batch, Districts, IndustryName, ITINames, TradeNames} from "./traineeData"
+import { AbsenceReason, AffiliationType, Batch, Districts, IndustryName, ITINames, TradeNames } from "./traineeData"
 
 const bc = new BroadcastChannel('test_channel');
 
@@ -61,16 +61,16 @@ const xmlSerializer = new XMLSerializer();
 const CONNECTION_URL = `${settings.basePath}/connection`;
 const TRANSFORM_URL = `${settings.basePath}/transform/xform${settings.enketoId ? `/${settings.enketoId}` : ''}`;
 const TRANSFORM_HASH_URL = `${settings.basePath}/transform/xform/hash/${settings.enketoId}`;
-const INSTANCE_URL = ( settings.enketoId ) ? `${settings.basePath}/submission/${settings.enketoId}` : null;
-const MAX_SIZE_URL = ( settings.enketoId ) ? `${settings.basePath}/submission/max-size/${settings.enketoId}` :
-    `${settings.basePath}/submission/max-size/?xformUrl=${encodeURIComponent( settings.xformUrl )}`;
+const INSTANCE_URL = (settings.enketoId) ? `${settings.basePath}/submission/${settings.enketoId}` : null;
+const MAX_SIZE_URL = (settings.enketoId) ? `${settings.basePath}/submission/max-size/${settings.enketoId}` :
+    `${settings.basePath}/submission/max-size/?xformUrl=${encodeURIComponent(settings.xformUrl)}`;
 const ABSOLUTE_MAX_SIZE = 100 * 1000 * 1000;
 const HASURA_URL = settings.hasuraEndPoint;
 const HASURA_ADMIN_SECRET = settings.hasuraAdminSecret;
 const FLASK_URL = settings.flaskUrl;
 const HEADERS = {
-    'Authorization':`Bearer ${HASURA_ADMIN_SECRET}`,
-    'Content-Type':'application/json',
+    'Authorization': `Bearer ${HASURA_ADMIN_SECRET}`,
+    'Content-Type': 'application/json',
 }
 const API_URL = settings.apiUrl;
 const HTTP_BASIC_USER = settings.httpBasicUser;
@@ -91,14 +91,14 @@ const MINIO = {
  * Checks online status
  */
 function getOnlineStatus() {
-    return fetch( CONNECTION_URL, { cache: 'no-cache', headers: { 'Content-Type': 'text/plain' } } )
-        .then( response => {
+    return fetch(CONNECTION_URL, { cache: 'no-cache', headers: { 'Content-Type': 'text/plain' } })
+        .then(response => {
             return response.text();
-        } )
+        })
         // It is important to check for the content of the no-cache response as it will
         // start receiving the fallback page served by the service worker when offline!
-        .then( text => /connected/.test( text ) )
-        .catch( () => false );
+        .then(text => /connected/.test(text))
+        .catch(() => false);
 }
 
 const getLoginToken = () => {
@@ -117,13 +117,13 @@ const getLoginToken = () => {
             Authorization: MINIO.HEADER_AUTH_TOKEN,
         };
 
-        return fetch( MINIO.LOGIN_URL, {
+        return fetch(MINIO.LOGIN_URL, {
             method: 'POST',
             cache: 'no-cache',
             headers: header,
             body: JSON.stringify(postData)
-        } )
-            .then( async (res) => {
+        })
+            .then(async (res) => {
                 const resData = await res.json();
                 logToken = resData.token;
 
@@ -143,21 +143,21 @@ const getSessionToken = async (logToken) => {
     let secretkey;
     let sessionToken;
 
-  
+
     try {
         let bucketId = MINIO.BUCKET_ID;
-                console.log(`https://${MINIO.HOST}/minio/${bucketId}/?Action=AssumeRoleWithWebIdentity&DurationSeconds=36000&WebIdentityToken=${logToken}&Version=2011-06-15`);
-        return fetch( `https://${MINIO.HOST}/minio/${bucketId}/?Action=AssumeRoleWithWebIdentity&DurationSeconds=36000&WebIdentityToken=${logToken}&Version=2011-06-15`, {
+        console.log(`https://${MINIO.HOST}/minio/${bucketId}/?Action=AssumeRoleWithWebIdentity&DurationSeconds=36000&WebIdentityToken=${logToken}&Version=2011-06-15`);
+        return fetch(`https://${MINIO.HOST}/minio/${bucketId}/?Action=AssumeRoleWithWebIdentity&DurationSeconds=36000&WebIdentityToken=${logToken}&Version=2011-06-15`, {
             method: 'POST',
             cache: 'no-cache'
-        } )
-            .then( async (res) => {
+        })
+            .then(async (res) => {
                 const resData = await res.text()
                 let parser = new DOMParser();
                 let doc = parser.parseFromString(resData, 'text/xml');
-                console.log(doc); 
+                console.log(doc);
                 accesskey = doc.getElementsByTagName("AccessKeyId")[0].textContent;
-                secretkey =  doc.getElementsByTagName("SecretAccessKey")[0].textContent;
+                secretkey = doc.getElementsByTagName("SecretAccessKey")[0].textContent;
                 sessionToken = doc.getElementsByTagName("SessionToken")[0].textContent;
 
                 return {
@@ -169,7 +169,7 @@ const getSessionToken = async (logToken) => {
                 throw { message: `Session Token error: ${err}` };
             });
     } catch (err) {
-       console.log(err);
+        console.log(err);
         throw err;
     }
 };
@@ -181,20 +181,20 @@ const getSessionToken = async (logToken) => {
  * @param  { EnketoRecord } record
  * @return { Promise<UploadBatchResult> }
  */
-async function _uploadRecord( record ) {
+async function _uploadRecord(record) {
     let batches;
 
     try {
-        batches = _prepareFormDataArray( record );
-    } catch ( e ) {
-        return Promise.reject( e );
+        batches = _prepareFormDataArray(record);
+    } catch (e) {
+        return Promise.reject(e);
     }
     // Get form data
     let formData = {};
     let parser = new DOMParser();
     let doc = parser.parseFromString(record.xml, 'text/xml');
     let formId = doc.getElementById('DST-Attendance-1');
-    if(formId !== null) {
+    if (formId !== null) {
         let enrl = doc.getElementsByTagName("reg_no");
         let dob = doc.getElementsByTagName("dob");
         formData.registrationNumber = enrl[0].textContent
@@ -208,24 +208,25 @@ async function _uploadRecord( record ) {
         absenceReason: ''
     };
     let locationDetail = true;
+    let selfieURL = "";
     let traineeDetailStatus = false;
     let parserString = new DOMParser();
     let document = parserString.parseFromString(record.xml, 'text/xml');
     let attendanceFormId = document.getElementById('DST-Attendance');
     let traineeRegistration = document.getElementById('trainee_registration');
-    if(attendanceFormId !== null) {
+    if (attendanceFormId !== null) {
         let detailsStatus = doc.getElementsByTagName("details");
-        if(detailsStatus.length !== 0) {
+        if (detailsStatus.length !== 0) {
             if (detailsStatus[0].textContent === 'No') {
                 traineeDetailStatus = false
                 // Redirect to React with a location
                 console.log("CP-0");
                 traineeId = localStorage.getItem("traineeId");
-                const traineeDetails = await fetch(`${HASURA_URL}/api/rest/trainee/byId?id=${traineeId}`, {headers: HEADERS}).then(res => res.json());
+                const traineeDetails = await fetch(`${HASURA_URL}/api/rest/trainee/byId?id=${traineeId}`, { headers: HEADERS }).then(res => res.json());
                 const trainee = traineeDetails.trainee[0];
                 const findKeyByValue = (object, valueToFind, defaultValue) => {
                     for (const [key, value] of Object.entries(object)) {
-                        if(valueToFind === value) return key;
+                        if (valueToFind === value) return key;
                     }
                     return defaultValue;
                 }
@@ -240,7 +241,7 @@ async function _uploadRecord( record ) {
                     `&trainee_dob=${trainee.DOB}`,
                     `&trainee_father_name=${trainee.father}`,
                     `&trainee_mother_name=${trainee.mother}`,
-                    `&trainee_affiliation=${trainee.affiliationType === 'NCVT'? 1 : 2}`,
+                    `&trainee_affiliation=${trainee.affiliationType === 'NCVT' ? 1 : 2}`,
                     `&district_name=${findKeyByValue(Districts, trainee.itiByIti.district, null)}`,
                     `&iti_name=${findKeyByValue(ITINames, trainee.itiByIti.name, null)}`,
                     `&batch=2022-2023`,
@@ -263,8 +264,8 @@ async function _uploadRecord( record ) {
             }
         }
         let location = doc.getElementsByTagName("distance");
-        if(location.length !== 0) {
-            if(location[0].textContent > 500) {
+        if (location.length !== 0) {
+            if (location[0].textContent > 500) {
                 locationDetail = false;
             } else {
                 locationDetail = true;
@@ -272,18 +273,18 @@ async function _uploadRecord( record ) {
         }
         const findKeyByValue = (object, valueToFind, defaultValue) => {
             for (const [key, value] of Object.entries(object)) {
-                if(valueToFind === key) return value;
+                if (valueToFind === key) return value;
             }
             return defaultValue;
         }
 
         let attendance = doc.getElementsByTagName("attendance_status");
         let absence_reason = doc.getElementsByTagName("absence_rsn");
-        if(attendance.length !== 0) {
-            if(attendance[0].textContent === 'Present') {
+        if (attendance.length !== 0) {
+            if (attendance[0].textContent === 'Present') {
                 attendanceDetail.attendanceStatus = true;
             } else {
-                if(absence_reason[0].textContent === 6) {
+                if (absence_reason[0].textContent === 6) {
                     attendanceDetail.absenceReason = doc.getElementsByTagName("if_other");
                 } else {
                     attendanceDetail.absenceReason = `${findKeyByValue(AbsenceReason, absence_reason[0].textContent, null)}`
@@ -293,48 +294,22 @@ async function _uploadRecord( record ) {
         }
 
         let selfie = window.document.getElementsByName('/data/selfie/selfie');
-        if(selfie.length !== 0) {
+        if (selfie.length !== 0) {
             const imgBase64 = selfie[0].dataset.resizedDataURI;
-            const postData = {image: imgBase64};
-            // const loginRes = await getLoginToken();
-        
-            const tokenRes = await fetch('https://enketo.sandbox.dst.samagra.io/submission/minio-file-upload', {
+            const postData = { image: imgBase64 };
+
+            selfieURL = await fetch('https://enketo.sandbox.dst.samagra.io/submission/minio-file-upload', {
                 method: 'POST',
                 cache: 'no-cache',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(postData)
-            });
+            }).then(response => response.json());
 
-            console.log('----', tokenRes)
+            attendanceDetail.selfie = selfieURL.data;
 
-            // const sessionRes = await getSessionToken(tokenRes);
-            // console.log('**************',selfie);
-            // sessionRes.file = selfie[1].textContent;
-            // console.log("im in",sessionRes.file)
-            // Upload file using multer
-           /* await fetch( 'http://localhost:8005/submission/multerUploadImage', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({file: selfie[1].textContent})
-            } )
-                .then( async response => {
-                    console.log('response of minio url', response);
-                })*/
-        //    await fetch( 'https://enketo.sandbox.dst.samagra.io/submission/uploadImage', {
-        //         method: 'POST',
-        //        headers: {
-        //            'Content-Type': 'application/json',
-        //        },
-        //         body: JSON.stringify(sessionRes)
-        //     } )
-        //         .then( async response => {
-        //             const imageUploadRes = await response.json();
-        //             attendanceDetail.selfie = imageUploadRes.url;
-        //         })
+            console.log('----', selfieURL);
         }
     }
 
@@ -344,10 +319,10 @@ async function _uploadRecord( record ) {
     let domParser = new DOMParser();
     let parseDoc = domParser.parseFromString(record.xml, 'text/xml');
     let trainerFormId = parseDoc.getElementById('trainer_login_beta_launch');
-    if(trainerFormId !== null) {
+    if (trainerFormId !== null) {
         const findKeyByValue = (object, valueToFind, defaultValue) => {
             for (const [key, value] of Object.entries(object)) {
-                if(valueToFind === key) return value;
+                if (valueToFind === key) return value;
             }
             return defaultValue;
         }
@@ -373,7 +348,7 @@ async function _uploadRecord( record ) {
         trainerData.location_confirm = locationConfirm[0].textContent
         trainerData.lat = location[0]
         trainerData.lng = location[1]
-    }else if(traineeRegistration !== null){
+    } else if (traineeRegistration !== null) {
         // <trainee_name/>
         // <trainee_phone_number/>
         // <trainee_gender/>
@@ -391,9 +366,9 @@ async function _uploadRecord( record ) {
         const itiName = ITINames[parseDoc.getElementsByTagName("iti_name")[0].textContent];
         const industryName = IndustryName[parseDoc.getElementsByTagName("industry_name")[0].textContent];
         const regId = parseDoc.getElementsByTagName("reg_id")[0].textContent;
-        const itiDetails = await fetch(`${HASURA_URL}/api/rest/iti?name=${itiName}`, {headers: HEADERS}).then(res => res.json());
-        const industryDetails = await fetch(`${HASURA_URL}/api/rest/getIndustryByName?name=${industryName}`, {headers: HEADERS}).then(res => res.json());
-        const isTraineePresentInDB = await fetch(`${HASURA_URL}/api/rest/trainee/id?reg=${regId}`, {headers: HEADERS}).then(res => res.json());
+        const itiDetails = await fetch(`${HASURA_URL}/api/rest/iti?name=${itiName}`, { headers: HEADERS }).then(res => res.json());
+        const industryDetails = await fetch(`${HASURA_URL}/api/rest/getIndustryByName?name=${industryName}`, { headers: HEADERS }).then(res => res.json());
+        const isTraineePresentInDB = await fetch(`${HASURA_URL}/api/rest/trainee/id?reg=${regId}`, { headers: HEADERS }).then(res => res.json());
         traineeData = {
             "industry": industryDetails.industry[0].id,
             "iti": itiDetails.iti[0].id,
@@ -411,39 +386,39 @@ async function _uploadRecord( record ) {
             "statusFlag": isTraineePresentInDB.trainee.length > 0 ? 1 : 2,
         }
 
-    }else{}
+    } else { }
 
 
     /** @type { Promise<UploadBatchResult[]> } */
-    let resultsPromise = Promise.resolve( [] );
+    let resultsPromise = Promise.resolve([]);
 
     /** @type { UploadBatchResult } */
     let result;
 
     // Perform batch uploads sequentially for to avoid issues when connections are very poor and
     // a serious issue with ODK Aggregate (https://github.com/kobotoolbox/enketo-express/issues/400)
-    return batches.reduce( ( prevPromise, batch ) => {
-        return prevPromise.then( results => {
-            return _uploadBatch( batch, formData, attendanceDetail, traineeDetailStatus, locationDetail, trainerData, traineeData ).then( result => {
-                results.push( result );
+    return batches.reduce((prevPromise, batch) => {
+        return prevPromise.then(results => {
+            return _uploadBatch(batch, formData, attendanceDetail, traineeDetailStatus, locationDetail, trainerData, traineeData).then(result => {
+                results.push(result);
 
                 return results;
-            } );
-        } );
-    }, resultsPromise )
-        .then( results => {
-            console.log( 'results of all batches submitted', results );
+            });
+        });
+    }, resultsPromise)
+        .then(results => {
+            console.log('results of all batches submitted', results);
 
-            result = results[ 0 ];
-        } )
-        .then( () => result );
+            result = results[0];
+        })
+        .then(() => result);
 }
 
 const uploadQueuedRecord = _uploadRecord;
 
-const uploadRecord = ( survey, record ) => (
-    setLastSavedRecord( survey, record )
-        .then( () => _uploadRecord( record ) )
+const uploadRecord = (survey, record) => (
+    setLastSavedRecord(survey, record)
+        .then(() => _uploadRecord(record))
 );
 
 /**
@@ -454,7 +429,7 @@ const uploadRecord = ( survey, record ) => (
  */
 
 // CONVERT OBJECT TO QUERY STRING
-function queryString (obj) {
+function queryString(obj) {
     const str = [];
     // eslint-disable-next-line no-restricted-syntax
     for (const p in obj) {
@@ -466,10 +441,10 @@ function queryString (obj) {
     return str.join('&');
 };
 
-async function _uploadBatch( recordBatch, formData, attendanceDetail, traineeDetailStatus, locationDetail, trainerData, traineeData ) {
+async function _uploadBatch(recordBatch, formData, attendanceDetail, traineeDetailStatus, locationDetail, trainerData, traineeData) {
     // Submission URL is dynamic, because settings.submissionParameter only gets populated after loading form from
     // cache in offline mode.
-   // const xmlResponse = parser.parseFromString(form.getDataStr( include ), 'text/xml' );
+    // const xmlResponse = parser.parseFromString(form.getDataStr( include ), 'text/xml' );
     const submissionUrl = `${HASURA_URL}/api/rest/getTraineeByEnrlAndDob`
     const controller = new AbortController();
 
@@ -478,28 +453,28 @@ async function _uploadBatch( recordBatch, formData, attendanceDetail, traineeDet
     }
     const submissionId = getMeta("formId");
 
-    setTimeout( () => {
+    setTimeout(() => {
         controller.abort();
-    }, settings.timeout );
+    }, settings.timeout);
 
-    if(submissionId === "enrollment") {
-        return fetch( submissionUrl, {
+    if (submissionId === "enrollment") {
+        return fetch(submissionUrl, {
             method: 'POST',
             cache: 'no-cache',
             headers: HEADERS,
             signal: controller.signal,
             body: JSON.stringify(formData)
-        } )
-            .then( async response => {
+        })
+            .then(async response => {
 
                 const resData = await response.json();
                 /** @type { UploadBatchResult } */
                 let result = {
                     status: response.status,
-                    failedFiles: ( recordBatch.failedFiles ) ? recordBatch.failedFiles : undefined,
+                    failedFiles: (recordBatch.failedFiles) ? recordBatch.failedFiles : undefined,
                     isValid: resData.trainee.length > 0
                 };
-                if(resData.trainee.length > 0) {
+                if (resData.trainee.length > 0) {
                     traineeData = resData.trainee[0];
                     // Call login or register api for trainee
                     const traineeParams = {
@@ -507,14 +482,14 @@ async function _uploadBatch( recordBatch, formData, attendanceDetail, traineeDet
                         dob: formData.dob
                     }
                     const traineeId = resData.trainee[0].id;
-                    const traineeDetails = await fetch(`${HASURA_URL}/api/rest/trainee/byId?id=${traineeId}`, {headers: HEADERS}).then(res => res.json());
+                    const traineeDetails = await fetch(`${HASURA_URL}/api/rest/trainee/byId?id=${traineeId}`, { headers: HEADERS }).then(res => res.json());
                     const trainee = traineeDetails.trainee[0];
                     const message = JSON.stringify({
-                                message: resData.trainee[0],
-                                loginRes: trainee,
-                                date: Date.now(),
-                                channel: 'enketo'
-                            });
+                        message: resData.trainee[0],
+                        loginRes: trainee,
+                        date: Date.now(),
+                        channel: 'enketo'
+                    });
                     result.isTraineeLogin = true;
                     localStorage.setItem("industryId", resData.trainee[0].industry);
                     localStorage.setItem("traineeId", resData.trainee[0].id);
@@ -548,7 +523,7 @@ async function _uploadBatch( recordBatch, formData, attendanceDetail, traineeDet
                 }
 
 
-                if ( response.status === 400 || resData.trainee.length === 0 ){
+                if (response.status === 400 || resData.trainee.length === 0) {
                     // 400 is a generic error. Any message returned by the server is probably more useful.
                     // Other more specific statusCodes will get hardcoded and translated messages.
                     const message = JSON.stringify({
@@ -571,19 +546,19 @@ async function _uploadBatch( recordBatch, formData, attendanceDetail, traineeDet
                     //         }
                     //         throw result;
                     //     } );
-                } else if ( response.status !== 201  && response.status !== 202 ){
+                } else if (response.status !== 201 && response.status !== 202) {
                     return result;
                 } else {
                     return result;
                 }
-            } )
-            .catch( error => {
-                if ( error.name === 'AbortError' && typeof error.status === 'undefined' ){
+            })
+            .catch(error => {
+                if (error.name === 'AbortError' && typeof error.status === 'undefined') {
                     error.status = 408;
                 }
                 throw error;
-            } );
-    } else if(submissionId === "preFilled") {
+            });
+    } else if (submissionId === "preFilled") {
         const prefilledSubmissionId = getMeta("formId");
         // Get current month & year
         const d = new Date();
@@ -593,20 +568,20 @@ async function _uploadBatch( recordBatch, formData, attendanceDetail, traineeDet
             industry_id: parseInt(localStorage.getItem("industryId"))
         }
         const attendanceApiUrl = `${HASURA_URL}/api/rest/getIndustryScheduleByMonthAndYear`
-        return fetch( attendanceApiUrl, {
+        return fetch(attendanceApiUrl, {
             method: 'POST',
             cache: 'no-cache',
             headers: HEADERS,
             signal: controller.signal,
             body: JSON.stringify(currentMonthYearData)
-        } )
-            .then( async response => {
+        })
+            .then(async response => {
                 const resData = await response.json();
 
                 /** @type { UploadBatchResult } */
                 let result = {
                     status: response.status,
-                    failedFiles: ( recordBatch.failedFiles ) ? recordBatch.failedFiles : undefined,
+                    failedFiles: (recordBatch.failedFiles) ? recordBatch.failedFiles : undefined,
                     isIndustry: resData.schedule.length !== 0 ? resData.schedule[0].is_industry : false,
                     prefilledSubmissionId,
                     traineeDetailStatus,
@@ -614,10 +589,10 @@ async function _uploadBatch( recordBatch, formData, attendanceDetail, traineeDet
                 };
 
                 // Attendance submit
-                if(result.isIndustry && prefilledSubmissionId === 'preFilled' && traineeDetailStatus && locationDetail) {
+                if (result.isIndustry && prefilledSubmissionId === 'preFilled' && traineeDetailStatus && locationDetail) {
                     // Attendance submit
                     var today = new Date();
-                    var attendanceDate = (today.getMonth()+1)+'-'+today.getDate() +'-'+today.getFullYear();
+                    var attendanceDate = (today.getMonth() + 1) + '-' + today.getDate() + '-' + today.getFullYear();
                     const attendanceData = {
                         industry_id: parseInt(localStorage.getItem("industryId")),
                         trainee_id: parseInt(localStorage.getItem("traineeId")),
@@ -634,124 +609,124 @@ async function _uploadBatch( recordBatch, formData, attendanceDetail, traineeDet
                         signal: controller.signal,
                         body: JSON.stringify(attendanceData)
                     });
-                    const attendanceResponse =  await attendanceRes.json();
+                    const attendanceResponse = await attendanceRes.json();
                     result.isAttendanceSubmit = (attendanceResponse.hasOwnProperty('code') && attendanceResponse.code === "constraint-violation" || attendanceResponse.code === "validation-failed")
                 }
 
-                if ( response.status === 400 ){
+                if (response.status === 400) {
                     // 400 is a generic error. Any message returned by the server is probably more useful.
                     // Other more specific statusCodes will get hardcoded and translated messages.
                     return response.text()
-                        .then( text => {
-                            const xmlResponse = parser.parseFromString( text, 'text/xml' );
-                            if ( xmlResponse ){
-                                const messageEl = xmlResponse.querySelector( 'OpenRosaResponse > message' );
-                                if ( messageEl ) {
+                        .then(text => {
+                            const xmlResponse = parser.parseFromString(text, 'text/xml');
+                            if (xmlResponse) {
+                                const messageEl = xmlResponse.querySelector('OpenRosaResponse > message');
+                                if (messageEl) {
                                     result.message = messageEl.textContent;
                                 }
                             }
                             throw result;
-                        } );
-                } else if ( response.status !== 201  && response.status !== 202 ){
+                        });
+                } else if (response.status !== 201 && response.status !== 202) {
                     return result;
                 } else {
                     return result;
                 }
-            } )
-            .catch( error => {
-                if ( error.name === 'AbortError' && typeof error.status === 'undefined' ){
+            })
+            .catch(error => {
+                if (error.name === 'AbortError' && typeof error.status === 'undefined') {
                     error.status = 408;
                 }
                 throw error;
-            } );
+            });
     } else if (submissionId === "trainer") {
         const addTrainerUrl = `${HASURA_URL}/api/rest/addTrainer`;
         console.log('addTrainerUrl', addTrainerUrl)
         console.log('trainerData', trainerData)
-        return fetch( addTrainerUrl, {
+        return fetch(addTrainerUrl, {
             method: 'POST',
             cache: 'no-cache',
             headers: HEADERS,
             signal: controller.signal,
             body: JSON.stringify(trainerData)
-        } )
-            .then( async response => {
+        })
+            .then(async response => {
 
                 const resData = await response.json();
                 console.log('res data', resData);
                 /** @type { UploadBatchResult } */
                 let result = {
                     status: response.status,
-                    failedFiles: ( recordBatch.failedFiles ) ? recordBatch.failedFiles : undefined,
+                    failedFiles: (recordBatch.failedFiles) ? recordBatch.failedFiles : undefined,
                 };
 
-                if ( response.status === 400 ){
+                if (response.status === 400) {
                     // 400 is a generic error. Any message returned by the server is probably more useful.
                     // Other more specific statusCodes will get hardcoded and translated messages.
                     return response.text()
-                        .then( text => {
-                            const xmlResponse = parser.parseFromString( text, 'text/xml' );
-                            if ( xmlResponse ){
-                                const messageEl = xmlResponse.querySelector( 'OpenRosaResponse > message' );
-                                if ( messageEl ) {
+                        .then(text => {
+                            const xmlResponse = parser.parseFromString(text, 'text/xml');
+                            if (xmlResponse) {
+                                const messageEl = xmlResponse.querySelector('OpenRosaResponse > message');
+                                if (messageEl) {
                                     result.message = messageEl.textContent;
                                 }
                             }
                             throw result;
-                        } );
-                } else if ( response.status !== 201  && response.status !== 202 ){
+                        });
+                } else if (response.status !== 201 && response.status !== 202) {
                     return result;
                 } else {
                     return result;
                 }
-            } )
-            .catch( error => {
-                if ( error.name === 'AbortError' && typeof error.status === 'undefined' ){
+            })
+            .catch(error => {
+                if (error.name === 'AbortError' && typeof error.status === 'undefined') {
                     error.status = 408;
                 }
                 throw error;
-            } );
-    }if(submissionId === "traineeRegistration"){
+            });
+    } if (submissionId === "traineeRegistration") {
         const upsertTrainee = `${HASURA_URL}/api/rest/trainee`;
-        return fetch( `${upsertTrainee}`, {
+        return fetch(`${upsertTrainee}`, {
             method: 'POST',
             cache: 'no-cache',
             headers: HEADERS,
             signal: controller.signal,
-            body: JSON.stringify({trainee: traineeData})
-        } )
-            .then( async response => {
+            body: JSON.stringify({ trainee: traineeData })
+        })
+            .then(async response => {
 
                 const resData = await response.json();
                 console.log('res data', resData);
                 /** @type { UploadBatchResult } */
                 let result = {
                     status: response.status,
-                    failedFiles: ( recordBatch.failedFiles ) ? recordBatch.failedFiles : undefined,
+                    failedFiles: (recordBatch.failedFiles) ? recordBatch.failedFiles : undefined,
                 };
 
-                if ( response.status === 400 ){
+                if (response.status === 400) {
                     // 400 is a generic error. Any message returned by the server is probably more useful.
                     // Other more specific statusCodes will get hardcoded and translated messages.
                     return response.text()
-                        .then( text => {
-                            const xmlResponse = parser.parseFromString( text, 'text/xml' );
-                            if ( xmlResponse ){
-                                const messageEl = xmlResponse.querySelector( 'OpenRosaResponse > message' );
-                                if ( messageEl ) {
+                        .then(text => {
+                            const xmlResponse = parser.parseFromString(text, 'text/xml');
+                            if (xmlResponse) {
+                                const messageEl = xmlResponse.querySelector('OpenRosaResponse > message');
+                                if (messageEl) {
                                     result.message = messageEl.textContent;
                                 }
                             }
                             throw result;
-                        } );
-                } else if ( response.status===200 ){
+                        });
+                } else if (response.status === 200) {
                     // Add Hook to verify if registered correctly
                     const traineeParams = {
                         id: formData.registrationNumber,
                         dob: formData.dob
                     }
                     const traineeId = resData.insert_trainee_one.id;
-                    const traineeDetails = await fetch(`${HASURA_URL}/api/rest/trainee/byId?id=${traineeId}`, {headers: HEADERS}).then(res => res.json());
+                    const traineeDetails = await fetch(`${HASURA_URL}/api/rest/trainee/byId?id=${traineeId}`, { headers: HEADERS }).then(res => res.json());
                     const trainee = traineeDetails.trainee[0];
                     const message = JSON.stringify({
                         traineeId: resData.insert_trainee_one.id,
@@ -772,13 +747,13 @@ async function _uploadBatch( recordBatch, formData, attendanceDetail, traineeDet
                     });
                     window.parent.postMessage(message, '*');
                 }
-            } )
-            .catch( error => {
-                if ( error.name === 'AbortError' && typeof error.status === 'undefined' ){
+            })
+            .catch(error => {
+                if (error.name === 'AbortError' && typeof error.status === 'undefined') {
                     error.status = 408;
                 }
                 throw error;
-            } );
+            });
     }
 }
 
@@ -788,19 +763,19 @@ async function _uploadBatch( recordBatch, formData, attendanceDetail, traineeDet
  * @param { EnketoRecord } record - record object
  * @return { BatchPrepped[] }
  */
-function _prepareFormDataArray( record ) {
-    const recordDoc = parser.parseFromString( record.xml, 'text/xml' );
+function _prepareFormDataArray(record) {
+    const recordDoc = parser.parseFromString(record.xml, 'text/xml');
 
     /** @type {Array<Omit<HTMLInputElement, 'type'>>} */
-    const fileElements = Array.prototype.slice.call( recordDoc.querySelectorAll( '[type="file"]' ) ).map( el => {
-        el.removeAttribute( 'type' );
+    const fileElements = Array.prototype.slice.call(recordDoc.querySelectorAll('[type="file"]')).map(el => {
+        el.removeAttribute('type');
 
         return el;
-    } );
-    const xmlData = xmlSerializer.serializeToString( recordDoc.documentElement );
-    const xmlSubmissionBlob = new Blob( [ xmlData ], {
+    });
+    const xmlData = xmlSerializer.serializeToString(recordDoc.documentElement);
+    const xmlSubmissionBlob = new Blob([xmlData], {
         type: 'text/xml'
-    } );
+    });
     const availableFiles = record.files || [];
     const sizes = [];
 
@@ -817,46 +792,46 @@ function _prepareFormDataArray( record ) {
 
     const maxSize = settings.maxSize;
 
-    fileElements.forEach( el => {
+    fileElements.forEach(el => {
         let file;
         const nodeName = el.nodeName;
         const fileName = el.textContent;
 
         // check if file is actually available
-        availableFiles.some( f => {
-            if ( f.name === fileName ) {
+        availableFiles.some(f => {
+            if (f.name === fileName) {
                 file = f;
 
                 return true;
             }
 
             return false;
-        } );
+        });
 
         // add the file if it is available
-        if ( file ) {
-            submissionFiles.push( {
+        if (file) {
+            submissionFiles.push({
                 nodeName,
                 file
-            } );
-            sizes.push( file.size );
+            });
+            sizes.push(file.size);
         } else {
-            failedFiles.push( fileName );
-            console.error( `Error occured when trying to retrieve ${fileName}` );
+            failedFiles.push(fileName);
+            console.error(`Error occured when trying to retrieve ${fileName}`);
         }
-    } );
+    });
 
-    if ( submissionFiles.length > 0 ) {
-        batches = _divideIntoBatches( sizes, maxSize );
+    if (submissionFiles.length > 0) {
+        batches = _divideIntoBatches(sizes, maxSize);
     }
-    console.log( `splitting record into ${batches.length} batches to reduce submission size `, batches );
+    console.log(`splitting record into ${batches.length} batches to reduce submission size `, batches);
 
-    batches.forEach( batch => {
+    batches.forEach(batch => {
         const fd = new FormData();
 
-        fd.append( 'xml_submission_file', xmlSubmissionBlob, 'xml_submission_file' );
-        const csrfToken = ( document.cookie.split( '; ' ).find( c => c.startsWith( '__csrf' ) ) || '' ).split( '=' )[1];
-        if ( csrfToken ) fd.append( '__csrf', csrfToken );
+        fd.append('xml_submission_file', xmlSubmissionBlob, 'xml_submission_file');
+        const csrfToken = (document.cookie.split('; ').find(c => c.startsWith('__csrf')) || '').split('=')[1];
+        if (csrfToken) fd.append('__csrf', csrfToken);
 
         // batch with XML data
         let batchPrepped = {
@@ -867,14 +842,14 @@ function _prepareFormDataArray( record ) {
         };
 
         // add any media files to the batch
-        batch.forEach( fileIndex => {
+        batch.forEach(fileIndex => {
             // Not clear what name is appropriate. Since file.name is unique and works, this is used.
-            batchPrepped.formData.append( submissionFiles[ fileIndex ].file.name, submissionFiles[ fileIndex ].file, submissionFiles[ fileIndex ].file.name );
-        } );
+            batchPrepped.formData.append(submissionFiles[fileIndex].file.name, submissionFiles[fileIndex].file, submissionFiles[fileIndex].file.name);
+        });
 
         // push the batch to the array
-        batchesPrepped.push( batchPrepped );
-    } );
+        batchesPrepped.push(batchPrepped);
+    });
 
     return batchesPrepped;
 }
@@ -888,7 +863,7 @@ function _prepareFormDataArray( record ) {
  * @return {Array.<Array.<number>>} array of arrays with index, each secondary array of indices represents a batch
  */
 
-function _divideIntoBatches( fileSizes, limit ) {
+function _divideIntoBatches(fileSizes, limit) {
     let i;
     let j;
     let batch;
@@ -896,29 +871,29 @@ function _divideIntoBatches( fileSizes, limit ) {
     const sizes = [];
     const batches = [];
 
-    for ( i = 0; i < fileSizes.length; i++ ) {
-        sizes.push( {
+    for (i = 0; i < fileSizes.length; i++) {
+        sizes.push({
             'index': i,
-            'size': fileSizes[ i ]
-        } );
+            'size': fileSizes[i]
+        });
     }
 
-    while ( sizes.length > 0 ) {
-        batch = [ sizes[ 0 ].index ];
-        batchSize = sizes[ 0 ].size;
-        if ( sizes[ 0 ].size < limit ) {
-            for ( i = 1; i < sizes.length; i++ ) {
-                if ( ( batchSize + sizes[ i ].size ) < limit ) {
-                    batch.push( sizes[ i ].index );
-                    batchSize += sizes[ i ].size;
+    while (sizes.length > 0) {
+        batch = [sizes[0].index];
+        batchSize = sizes[0].size;
+        if (sizes[0].size < limit) {
+            for (i = 1; i < sizes.length; i++) {
+                if ((batchSize + sizes[i].size) < limit) {
+                    batch.push(sizes[i].index);
+                    batchSize += sizes[i].size;
                 }
             }
         }
-        batches.push( batch );
-        for ( i = 0; i < sizes.length; i++ ) {
-            for ( j = 0; j < batch.length; j++ ) {
-                if ( sizes[ i ].index === batch[ j ] ) {
-                    sizes.splice( i, 1 );
+        batches.push(batch);
+        for (i = 0; i < sizes.length; i++) {
+            for (j = 0; j < batch.length; j++) {
+                if (sizes[i].index === batch[j]) {
+                    sizes.splice(i, 1);
                 }
             }
         }
@@ -934,19 +909,19 @@ function _divideIntoBatches( fileSizes, limit ) {
  * @param {object} survey - survey object
  * @return { Promise } a Promise that resolves with the provided survey object with added maxSize property if successful
  */
-function getMaximumSubmissionSize( survey ) {
+function getMaximumSubmissionSize(survey) {
     // TODO: add 5 sec timeout?
-    return fetch ( MAX_SIZE_URL )
-        .then( response => response.json() )
-        .then( data  => {
-            if ( data && data.maxSize && !isNaN( data.maxSize ) ) {
-                survey.maxSize = Number( data.maxSize ) > ABSOLUTE_MAX_SIZE ? ABSOLUTE_MAX_SIZE : Number( data.maxSize );
+    return fetch(MAX_SIZE_URL)
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.maxSize && !isNaN(data.maxSize)) {
+                survey.maxSize = Number(data.maxSize) > ABSOLUTE_MAX_SIZE ? ABSOLUTE_MAX_SIZE : Number(data.maxSize);
             } else {
-                console.error( 'Error retrieving maximum submission size. Unexpected response: ', data );
+                console.error('Error retrieving maximum submission size. Unexpected response: ', data);
             }
-        } )
-        .catch( () => {} )
-        .then( () => survey );
+        })
+        .catch(() => { })
+        .then(() => survey);
 }
 
 /**
@@ -955,110 +930,110 @@ function getMaximumSubmissionSize( survey ) {
  * @param { GetFormPartsProps } props - form properties object
  * @return { Promise<Survey> } a Promise that resolves with a form parts object
  */
-function getFormParts( props ) {
+function getFormParts(props) {
     /** @type {Survey} */
     let survey;
 
-    return _postData( TRANSFORM_URL + _getQuery(), {
+    return _postData(TRANSFORM_URL + _getQuery(), {
         xformUrl: props.xformUrl
-    } )
-        .then( data => {
-            const model = parser.parseFromString( data.model, 'text/xml' );
+    })
+        .then(data => {
+            const model = parser.parseFromString(data.model, 'text/xml');
 
-            const encryptedSubmission = model.querySelector( 'submission[base64RsaPublicKey]' );
+            const encryptedSubmission = model.querySelector('submission[base64RsaPublicKey]');
 
-            survey = Object.assign( {}, data, {
+            survey = Object.assign({}, data, {
                 enketoId: props.enketoId,
-                theme: data.theme || utils.getThemeFromFormStr( data.form ) || settings.defaultTheme,
-            } );
+                theme: data.theme || utils.getThemeFromFormStr(data.form) || settings.defaultTheme,
+            });
 
-            if ( encryptedSubmission != null ) {
-                survey = encryptor.setEncryptionEnabled( survey );
+            if (encryptedSubmission != null) {
+                survey = encryptor.setEncryptionEnabled(survey);
             }
 
-            const relativeBinaryDefaults = model.querySelectorAll( 'instance > * > *[src^="/"]' );
+            const relativeBinaryDefaults = model.querySelectorAll('instance > * > *[src^="/"]');
 
-            relativeBinaryDefaults.forEach( element => {
-                const src = element.getAttribute( 'src' );
+            relativeBinaryDefaults.forEach(element => {
+                const src = element.getAttribute('src');
 
-                element.setAttribute( 'src', new URL( src, window.location ) );
-            } );
+                element.setAttribute('src', new URL(src, window.location));
+            });
 
-            survey.model = xmlSerializer.serializeToString( model.documentElement );
+            survey.model = xmlSerializer.serializeToString(model.documentElement);
 
-            return _getExternalData( survey, model );
-        } )
-        .then( externalData => Object.assign( survey, { externalData } ) )
-        .then( survey => Promise.all( [
+            return _getExternalData(survey, model);
+        })
+        .then(externalData => Object.assign(survey, { externalData }))
+        .then(survey => Promise.all([
             survey,
-            getLastSavedRecord( survey.enketoId ),
-        ] ) )
-        .then( ( [ survey, lastSavedRecord ] ) => (
-            populateLastSavedInstances( survey, lastSavedRecord )
-        ) );
+            getLastSavedRecord(survey.enketoId),
+        ]))
+        .then(([survey, lastSavedRecord]) => (
+            populateLastSavedInstances(survey, lastSavedRecord)
+        ));
 }
 
-function _postData( url, data = {}  ){
-    return _request( url, 'POST', data );
+function _postData(url, data = {}) {
+    return _request(url, 'POST', data);
 }
 
-function _getData( url, data = {} ){
-    return _request( url, 'GET', data );
+function _getData(url, data = {}) {
+    return _request(url, 'GET', data);
 }
 
-function _request( url, method = 'POST', data = {}  ){
+function _request(url, method = 'POST', data = {}) {
     const options = {
         method,
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded','Accept': 'application/json' }
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'application/json' }
     };
     // add data
-    if ( method === 'GET' || method === 'HEAD' ){
-        if ( Object.keys( data ).length ){
-            const urlObj = new URL( url, location.href );
-            const search = urlObj.search.slice( 1 );
-            urlObj.search = `?${search}${search ? '&' : ''}${_encodeFormData( data )}`;
+    if (method === 'GET' || method === 'HEAD') {
+        if (Object.keys(data).length) {
+            const urlObj = new URL(url, location.href);
+            const search = urlObj.search.slice(1);
+            urlObj.search = `?${search}${search ? '&' : ''}${_encodeFormData(data)}`;
             url = urlObj.href;
         }
     } else {
-        options.body = _encodeFormData( data );
+        options.body = _encodeFormData(data);
     }
 
-    return fetch( url, options )
-        .then( _throwResponseError )
-        .then( response => response.json() )
-        .catch(  data => {
-            const error = new Error( data.message );
+    return fetch(url, options)
+        .then(_throwResponseError)
+        .then(response => response.json())
+        .catch(data => {
+            const error = new Error(data.message);
             error.status = data.status;
             throw error;
-        } );
+        });
 }
 
 /**
  * @param { Response } response
  * @return { Response }
  */
-function _throwResponseError( response ){
-    if ( !response.ok ){
+function _throwResponseError(response) {
+    if (!response.ok) {
         return response.json()
-            .then( data => {
-                if ( typeof data.status === 'undefined' ){
+            .then(data => {
+                if (typeof data.status === 'undefined') {
                     data.status = response.status;
                 }
-                if ( typeof data.message === 'undefined' ){
+                if (typeof data.message === 'undefined') {
                     data.status = response.statusText;
                 }
                 throw data;
-            } );
+            });
     } else {
         return response;
     }
 }
 
-function _encodeFormData( data ){
-    return Object.keys( data )
-        .filter( key => data[key] )
-        .map( key => encodeURIComponent( key ) + '=' + encodeURIComponent( data[key] ) )
-        .join( '&' );
+function _encodeFormData(data) {
+    return Object.keys(data)
+        .filter(key => data[key])
+        .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(data[key]))
+        .join('&');
 }
 
 /**
@@ -1066,43 +1041,43 @@ function _encodeFormData( data ){
  * @param {Document} model
  * @return {Promise<SurveyExternalData[]>}
  */
-function _getExternalData( survey, model ) {
+function _getExternalData(survey, model) {
     /** @type {Array<Promise<SurveyExternalData>>} */
     let tasks = [];
 
     try {
-        const externalInstances = [ ...model.querySelectorAll( 'instance[id][src]' ) ]
-            .map( instance => ( {
-                id:  instance.id,
-                src: instance.getAttribute( 'src' )
-            } ) );
+        const externalInstances = [...model.querySelectorAll('instance[id][src]')]
+            .map(instance => ({
+                id: instance.id,
+                src: instance.getAttribute('src')
+            }));
 
         externalInstances
-            .forEach( ( instance, index ) => {
-                if ( instance.src === LAST_SAVED_VIRTUAL_ENDPOINT ) {
-                    tasks.push( Promise.resolve( instance ) );
+            .forEach((instance, index) => {
+                if (instance.src === LAST_SAVED_VIRTUAL_ENDPOINT) {
+                    tasks.push(Promise.resolve(instance));
 
                     return;
                 }
 
-                tasks.push( _getDataFile( instance.src, survey.languageMap )
-                    .then( xmlData => {
-                        return Object.assign( {}, instance, { xml: xmlData } );
-                    } )
-                    .catch( e => {
-                        tasks.splice( index, 1 );
+                tasks.push(_getDataFile(instance.src, survey.languageMap)
+                    .then(xmlData => {
+                        return Object.assign({}, instance, { xml: xmlData });
+                    })
+                    .catch(e => {
+                        tasks.splice(index, 1);
                         // let external data files fail quietly in previews with ?form= parameter
-                        if ( !survey.enketoId ){
+                        if (!survey.enketoId) {
                             return;
                         }
                         throw e;
-                    } ) );
-            } );
-    } catch ( e ) {
-        return Promise.reject( e );
+                    }));
+            });
+    } catch (e) {
+        return Promise.reject(e);
     }
 
-    return Promise.all( tasks );
+    return Promise.all(tasks);
 }
 
 
@@ -1112,23 +1087,23 @@ function _getExternalData( survey, model ) {
  * @param { string } url - a URL to a media file
  * @return {Promise<{url: string, item: Blob}>} a Promise that resolves with a media file object
  */
-function getMediaFile( url ) {
+function getMediaFile(url) {
 
-    return fetch( url )
-        .then( _throwResponseError )
-        .then( response =>  response.blob() )
-        .then( item => ( { url, item } ) )
-        .catch(  data => {
-            const error = new Error( data.message || t( 'error.loadfailed', {
+    return fetch(url)
+        .then(_throwResponseError)
+        .then(response => response.blob())
+        .then(item => ({ url, item }))
+        .catch(data => {
+            const error = new Error(data.message || t('error.loadfailed', {
                 resource: url,
                 // switch off escaping just for this known safe value
                 interpolation: {
                     escapeValue: false
                 }
-            } ) );
+            }));
             error.status = data.status;
             throw error;
-        } );
+        });
 }
 
 /**
@@ -1138,45 +1113,45 @@ function getMediaFile( url ) {
  * @param {object } languageMap - language map object with language name properties and IANA subtag values
  * @return {Promise<XMLDocument>} a Promise that resolves with an XML Document
  */
-function _getDataFile( url, languageMap ) {
+function _getDataFile(url, languageMap) {
     let contentType;
 
-    return fetch( url )
-        .then( response => {
-            contentType = response.headers.get( 'Content-Type' ).split( ';' )[ 0 ];
+    return fetch(url)
+        .then(response => {
+            contentType = response.headers.get('Content-Type').split(';')[0];
 
             return response.text();
-        } )
-        .then( responseText => {
+        })
+        .then(responseText => {
             let result;
-            switch ( contentType ) {
+            switch (contentType) {
                 case 'text/csv':
-                    result = utils.csvToXml( responseText, languageMap );
+                    result = utils.csvToXml(responseText, languageMap);
                     break;
                 case 'text/xml':
-                    result = parser.parseFromString( responseText, contentType );
+                    result = parser.parseFromString(responseText, contentType);
                     break;
                 default:
-                    console.error( 'External data not served with expected Content-Type.', contentType );
-                    result = parser.parseFromString( responseText, 'text/xml' );
+                    console.error('External data not served with expected Content-Type.', contentType);
+                    result = parser.parseFromString(responseText, 'text/xml');
             }
-            if ( result && result.querySelector( 'parsererror' ) && contentType !== 'text/csv' ) {
-                console.log( 'Failed to parse external data as XML, am going to try as CSV' );
-                result = utils.csvToXml( responseText, languageMap );
+            if (result && result.querySelector('parsererror') && contentType !== 'text/csv') {
+                console.log('Failed to parse external data as XML, am going to try as CSV');
+                result = utils.csvToXml(responseText, languageMap);
             }
 
             return result;
-        } )
-        .catch( error => {
-            const errorMsg = error.message || t( 'error.dataloadfailed', {
+        })
+        .catch(error => {
+            const errorMsg = error.message || t('error.dataloadfailed', {
                 url,
                 // switch off escaping just for this known safe value
                 interpolation: {
                     escapeValue: false
                 }
-            } );
-            throw new Error( errorMsg );
-        } );
+            });
+            throw new Error(errorMsg);
+        });
 }
 
 /**
@@ -1185,22 +1160,22 @@ function _getDataFile( url, languageMap ) {
  * @param { string } serviceWorkerUrl - service worker URL
  * @return {Promise<string>} a Promise that resolves with the version of the service worker or 'unknown'
  */
-function getServiceWorkerVersion( serviceWorkerUrl ) {
+function getServiceWorkerVersion(serviceWorkerUrl) {
 
-    return fetch( serviceWorkerUrl )
-        .then( response => {
+    return fetch(serviceWorkerUrl)
+        .then(response => {
             return response.text();
-        } )
-        .then( text => {
-            const matches = text.match( /version\s?=\s?'([^\n]+)'/ );
+        })
+        .then(text => {
+            const matches = text.match(/version\s?=\s?'([^\n]+)'/);
 
-            return matches ? matches[ 1 ] : 'unknown';
-        } );
+            return matches ? matches[1] : 'unknown';
+        });
 }
 
 function getFormPartsHash() {
-    return _postData( TRANSFORM_HASH_URL + _getQuery() )
-        .then( data => data.hash );
+    return _postData(TRANSFORM_HASH_URL + _getQuery())
+        .then(data => data.hash);
 }
 
 /**
@@ -1209,13 +1184,13 @@ function getFormPartsHash() {
  * @param { object } props - form properties object
  * @return { Promise<string> } a Promise that resolves with an XML instance as text
  */
-function getExistingInstance( props ) {
-    return _getData( INSTANCE_URL, props );
+function getExistingInstance(props) {
+    return _getData(INSTANCE_URL, props);
 }
 
 // Note: settings.submissionParameter is only populated after loading form from cache in offline mode.
 function _getQuery() {
-    return utils.getQueryString( [ settings.languageOverrideParameter, settings.submissionParameter ] );
+    return utils.getQueryString([settings.languageOverrideParameter, settings.submissionParameter]);
 }
 
 export default {
