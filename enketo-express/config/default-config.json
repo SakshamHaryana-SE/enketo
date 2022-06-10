@@ -82,5 +82,14 @@
     "validate continuously": false,
     "validate page": true,
     "payload limit": "100kb",
-    "text field character limit": 2000
+    "text field character limit": 2000,
+    "minio": {
+        "login-id": "pdf-make-cdn",
+        "minio-password": "abcd1234",
+        "application-id": "2011a6c9-7fb7-4306-8c6d-c96cb07c7859",
+        "header-auth-token": "YFpyHxhW0-NoKRwQrXgCU5QIAQq8nBNhE--i5_n3pTU",
+        "login-api": "http://auth.samagra.io:9011/api/login",
+        "bucket-id": "pdf-make-outputs",
+        "host": "cdn.samagra.io"
+    }
 }

@@ -102,6 +102,7 @@ function getOnlineStatus() {
 }
 
 const getLoginToken = () => {
+    // return "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IkY5NEl0dktKT0RlQXlabVRCX2NlX1J3ejVsMCJ9.eyJhdWQiOiIyMDExYTZjOS03ZmI3LTQzMDYtOGM2ZC1jOTZjYjA3Yzc4NTkiLCJleHAiOjE2NTQ2OTA0NzksImlhdCI6MTY1NDY4Njg3OSwiaXNzIjoiYWNtZS5jb20iLCJzdWIiOiIyZjZjYjA1OC1mZjYzLTRjMmUtOGQyNC1jOTg5YWIyNjY0OTciLCJqdGkiOiJkZTAyODNhOS03N2IyLTRjOWQtOGNhYS1hNTdiYmUwNDUxNjUiLCJhdXRoZW50aWNhdGlvblR5cGUiOiJQQVNTV09SRCIsInByZWZlcnJlZF91c2VybmFtZSI6InBkZi1tYWtlLWNkbiIsImFwcGxpY2F0aW9uSWQiOiIyMDExYTZjOS03ZmI3LTQzMDYtOGM2ZC1jOTZjYjA3Yzc4NTkiLCJyb2xlcyI6WyJwZGYtbWFrZSJdLCJwb2xpY3kiOiJwZGYtbWFrZSJ9.NhVYaRzO9rPrAIEaEhFCKuJcUDxtkFA12PfDaqray3pCWtfmyqrkWXQ3MRjLTagcNmN1_Ohhb52vl1mMBYy6ddsQBfC0bzufPqdzjqsK0JE0skwuPzS8gOdwKlR2PTHk5PuXU-thfu4YUDk71kOYpP5Dmd-B9D-Cexyq28dQzxAdC6thdH6rWTZ3TJVaj2MDKJBy24d93DQxdHm4f_29ccRr-qGPNI-PP8s8BexDOx8Hr8t0kFnpVU2i1TF8cr1I2tlMtajxr-EvWhmAdX4JPtF_H6soIzug6wYNOSowopEQgw7WSJ5ywllTfHjRgILlA4_fz0tlDT9GnjTB-XPmTg";
     try {
         let logToken;
 
@@ -142,9 +143,10 @@ const getSessionToken = async (logToken) => {
     let secretkey;
     let sessionToken;
 
+  
     try {
         let bucketId = MINIO.BUCKET_ID;
-
+                console.log(`https://${MINIO.HOST}/minio/${bucketId}/?Action=AssumeRoleWithWebIdentity&DurationSeconds=36000&WebIdentityToken=${logToken}&Version=2011-06-15`);
         return fetch( `https://${MINIO.HOST}/minio/${bucketId}/?Action=AssumeRoleWithWebIdentity&DurationSeconds=36000&WebIdentityToken=${logToken}&Version=2011-06-15`, {
             method: 'POST',
             cache: 'no-cache'
@@ -153,6 +155,7 @@ const getSessionToken = async (logToken) => {
                 const resData = await res.text()
                 let parser = new DOMParser();
                 let doc = parser.parseFromString(resData, 'text/xml');
+                console.log(doc); 
                 accesskey = doc.getElementsByTagName("AccessKeyId")[0].textContent;
                 secretkey =  doc.getElementsByTagName("SecretAccessKey")[0].textContent;
                 sessionToken = doc.getElementsByTagName("SessionToken")[0].textContent;
@@ -289,11 +292,27 @@ async function _uploadRecord( record ) {
             }
         }
 
-        let selfie = doc.getElementsByTagName("selfie");
+        let selfie = window.document.getElementsByName('/data/selfie/selfie');
         if(selfie.length !== 0) {
-            const tokenRes = await getLoginToken();
-            const sessionRes = await getSessionToken(tokenRes);
-            sessionRes.file = selfie[1].textContent;
+            const imgBase64 = selfie[0].dataset.resizedDataURI;
+            const postData = {image: imgBase64};
+            // const loginRes = await getLoginToken();
+        
+            const tokenRes = await fetch('https://enketo.sandbox.dst.samagra.io/submission/minio-file-upload', {
+                method: 'POST',
+                cache: 'no-cache',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(postData)
+            });
+
+            console.log('----', tokenRes)
+
+            // const sessionRes = await getSessionToken(tokenRes);
+            // console.log('**************',selfie);
+            // sessionRes.file = selfie[1].textContent;
+            // console.log("im in",sessionRes.file)
             // Upload file using multer
            /* await fetch( 'http://localhost:8005/submission/multerUploadImage', {
                 method: 'POST',
@@ -305,17 +324,17 @@ async function _uploadRecord( record ) {
                 .then( async response => {
                     console.log('response of minio url', response);
                 })*/
-           await fetch( 'http://localhost:8005/submission/uploadImage', {
-                method: 'POST',
-               headers: {
-                   'Content-Type': 'application/json',
-               },
-                body: JSON.stringify(sessionRes)
-            } )
-                .then( async response => {
-                    const imageUploadRes = await response.json();
-                    attendanceDetail.selfie = imageUploadRes.url;
-                })
+        //    await fetch( 'https://enketo.sandbox.dst.samagra.io/submission/uploadImage', {
+        //         method: 'POST',
+        //        headers: {
+        //            'Content-Type': 'application/json',
+        //        },
+        //         body: JSON.stringify(sessionRes)
+        //     } )
+        //         .then( async response => {
+        //             const imageUploadRes = await response.json();
+        //             attendanceDetail.selfie = imageUploadRes.url;
+        //         })
         }
     }
 
