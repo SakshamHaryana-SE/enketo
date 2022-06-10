@@ -391,7 +391,7 @@ function _loadRecord( instanceId, confirmed ) {
                 gui.alert( "Trainee doesn't exists!", t( 'alert.submissionerror.heading' ) );
             } else if (!isTraineeLogin && isTraineeLogin !== undefined) {
                 gui.alert( result.errorMsg, t( 'alert.submissionerror.heading' ) );
-            } else if(!isDetailCorrect && isIndustry !== undefined) {
+            } else if(!isDetailCorrect && isDetailCorrect !== undefined) {
                 gui.alert( "Your details are incorrect! Please enter valid detail.", t( 'alert.submissionerror.heading' ) );
                 const message = JSON.stringify({
                     isEnrl: true,
@@ -400,6 +400,7 @@ function _loadRecord( instanceId, confirmed ) {
                 window.parent.postMessage(message, '*');
             } else if (!isIndustry && isIndustry !== undefined) {
                 if(prefilledSubmissionId === 'preFilled') {
+                    console.log('Is indutry trainee detail', isIndustry)
                     gui.alert( "Trainee schedule doesn't match with the mapped industry schedule.", t( 'alert.submissionerror.heading' ) );
                     const message = JSON.stringify({
                         isEnrl: true,

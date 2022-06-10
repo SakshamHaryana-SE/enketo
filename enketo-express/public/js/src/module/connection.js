@@ -556,7 +556,7 @@ async function _uploadBatch( recordBatch, formData, attendanceDetail, traineeDet
                         url: null, //Additional Param added
                         loginRes: null,
                         date: Date.now(),
-                        channel: 'traineeDetail'
+                        channel: 'traineeAfterLoginDetail'
                     });
                     window.parent.postMessage(message, '*');
                     return;
