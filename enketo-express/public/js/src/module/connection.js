@@ -698,7 +698,7 @@ async function _uploadBatch(recordBatch, formData, attendanceDetail, traineeDeta
             .then(async response => {
 
                 const resData = await response.json();
-                console.log('res data', resData);
+                console.log('res data trainee data', resData);
                 /** @type { UploadBatchResult } */
                 let result = {
                     status: response.status,
@@ -735,6 +735,8 @@ async function _uploadBatch(recordBatch, formData, attendanceDetail, traineeDeta
                         date: Date.now(),
                         channel: 'traineeRegistration'
                     });
+                     localStorage.setItem("industryId", traineeDetails.trainee[0].industry);
+                     localStorage.setItem("traineeId", traineeDetails.trainee[0].id);
                     window.parent.postMessage(message, '*');
                     return;
                 } else {
