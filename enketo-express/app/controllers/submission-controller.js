@@ -140,6 +140,13 @@ function submit(req, res, next) {
 async function minioFileUpload(req, res, next) {
     try {
         let base64Data = req.body.image;
+        if (!base64Data) {
+            const error = new Error('Image is mandatory');
+            error.status = 400;
+            // throw error;
+            next(error);
+            return;
+        }
         const extension = base64Data.substring("data:image/".length, base64Data.indexOf(";base64"))
         base64Data = base64Data.replace(/^data:image\/(png|jpeg|jpg);base64,/, "");
 
@@ -149,8 +156,8 @@ async function minioFileUpload(req, res, next) {
         const tokenRes = await getLoginToken();
         // console.log('----', tokenRes)
         const sessionRes = await getSessionToken(tokenRes);
-        console.log('**************', sessionRes);
-        console.log('-----'.fileName);
+        // console.log('**************', sessionRes);
+        // console.log('-----'.fileName);
 
         const minioClient = new Minio.Client({
             endPoint: "cdn.samagra.io",
@@ -174,7 +181,7 @@ async function minioFileUpload(req, res, next) {
                     if (err) {
                         return reject(err);
                     }
-                    console.log("Success", objInfo);
+                    // console.log("Success", objInfo);
                     // removing local file
                     fs.unlinkSync(filePath);
                     resolve(objInfo)
