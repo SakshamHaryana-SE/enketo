@@ -84,6 +84,7 @@ const MINIO = {
     LOGIN_URL: settings.loginApi,
     HOST: settings.host
 }
+const ENKETO_END_POINT = settings.enketoEndPoint
 
 
 /**
@@ -298,7 +299,7 @@ async function _uploadRecord(record) {
             const imgBase64 = selfie[0].dataset.resizedDataURI;
             const postData = { image: imgBase64 };
 
-            selfieURL = await fetch('https://enketo.sandbox.dst.samagra.io/submission/minio-file-upload', {
+            selfieURL = await fetch(`${ENKETO_END_POINT}/submission/minio-file-upload`, {
                 method: 'POST',
                 cache: 'no-cache',
                 headers: {

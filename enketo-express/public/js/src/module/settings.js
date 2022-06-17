@@ -37,6 +37,7 @@ settings.headerAuthToken=config ['minioConfig'] ['headerAuthToken'] ,
 settings.loginApi= config ['minioConfig'] ['loginApi']
 settings.bucketId= config ['minioConfig'] ['bucketId']
 settings.host= config ['minioConfig'] ['host']
+settings.enketoEndPoint = config ['enketoEndPoint']
 
 // add default return Url
 settings.defaultReturnUrl = config[ 'basePath' ] + DEFAULT_THANKS_URL;

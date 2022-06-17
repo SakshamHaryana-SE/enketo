@@ -344,7 +344,8 @@ module.exports = {
             loginApi: config ['minio'] ['login-api'],
             bucketId: config ['minio'] ['bucket-id'],
             host: config ['minio'] ['host']
-        }
+        },
+        enketoEndPoint: config ['enketo-end-point']
     },
     getThemesSupported
 };
