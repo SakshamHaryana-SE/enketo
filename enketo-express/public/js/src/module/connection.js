@@ -291,6 +291,7 @@ async function _uploadRecord(record) {
                     attendanceDetail.absenceReason = `${findKeyByValue(AbsenceReason, absence_reason[0].textContent, null)}`
                 }
                 attendanceDetail.attendanceStatus = false;
+                attendanceDetail.selfie = '';
             }
         }
 
@@ -386,6 +387,7 @@ async function _uploadRecord(record) {
             "registrationNumber": regId,
             "statusFlag": isTraineePresentInDB.trainee.length > 0 ? 1 : 2,
         }
+        console.log('traineeData', traineeData);
 
     } else { }
 
