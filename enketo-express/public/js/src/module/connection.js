@@ -296,7 +296,7 @@ async function _uploadRecord(record) {
         }
 
         let selfie = window.document.getElementsByName('/data/selfie/selfie');
-        if (attendance[0].textContent === 'Present' && location.length !== 0) {
+        if (attendance.length > 0 && attendance[0].textContent === 'Present' && location.length !== 0) {
             const imgBase64 = selfie[0].dataset.resizedDataURI;
             const postData = { image: imgBase64 };
 
