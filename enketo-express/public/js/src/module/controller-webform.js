@@ -288,7 +288,7 @@ function _loadRecord( instanceId, confirmed ) {
  * @param {Survey} survey
  */
     function _submitRecord( survey ) {
-    console.log('settingssettingssettings', settings);
+    // console.log('settingssettingssettings', settings);
     const redirect = settings.type === 'single' || settings.type === 'edit' || settings.type === 'view';
     let beforeMsg;
     let authLink;
@@ -347,8 +347,8 @@ function _loadRecord( instanceId, confirmed ) {
             isAttendanceSubmit = result.isAttendanceSubmit
             isDetailCorrect = result.traineeDetailStatus
             locationDetail = result.locationDetail
-            console.log('locationDetaillocationDetail', locationDetail);
-            console.log('isAttendanceSubmit', isAttendanceSubmit);
+            // console.log('locationDetaillocationDetail', locationDetail);
+            // console.log('isAttendanceSubmit', isAttendanceSubmit);
             if ( result.failedFiles && result.failedFiles.length > 0 ) {
                 msg = `${t( 'alert.submissionerror.fnfmsg', {
                     failedFiles: result.failedFiles.join( ', ' ),
@@ -400,7 +400,7 @@ function _loadRecord( instanceId, confirmed ) {
                 window.parent.postMessage(message, '*');
             } else if (!isIndustry && isIndustry !== undefined) {
                 if(prefilledSubmissionId === 'preFilled') {
-                    console.log('Is indutry trainee detail', isIndustry)
+                    // console.log('Is indutry trainee detail', isIndustry)
                     gui.alert( "Trainee schedule doesn't match with the mapped industry schedule.", t( 'alert.submissionerror.heading' ) );
                     const message = JSON.stringify({
                         isEnrl: true,
