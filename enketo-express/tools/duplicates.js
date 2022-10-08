@@ -229,7 +229,7 @@ function remove( key, id ) {
                 reject( new Error( msg ) );
             } else {
                 msg = `Removed ${key} for id ${id}`;
-                console.log( msg );
+                // console.log( msg );
                 resolve( msg );
             }
         } );

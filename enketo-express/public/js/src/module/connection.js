@@ -147,7 +147,7 @@ const getSessionToken = async (logToken) => {
 
     try {
         let bucketId = MINIO.BUCKET_ID;
-        console.log(`https://${MINIO.HOST}/minio/${bucketId}/?Action=AssumeRoleWithWebIdentity&DurationSeconds=36000&WebIdentityToken=${logToken}&Version=2011-06-15`);
+        // console.log(`https://${MINIO.HOST}/minio/${bucketId}/?Action=AssumeRoleWithWebIdentity&DurationSeconds=36000&WebIdentityToken=${logToken}&Version=2011-06-15`);
         return fetch(`https://${MINIO.HOST}/minio/${bucketId}/?Action=AssumeRoleWithWebIdentity&DurationSeconds=36000&WebIdentityToken=${logToken}&Version=2011-06-15`, {
             method: 'POST',
             cache: 'no-cache'
@@ -156,7 +156,7 @@ const getSessionToken = async (logToken) => {
                 const resData = await res.text()
                 let parser = new DOMParser();
                 let doc = parser.parseFromString(resData, 'text/xml');
-                console.log(doc);
+                // console.log(doc);
                 accesskey = doc.getElementsByTagName("AccessKeyId")[0].textContent;
                 secretkey = doc.getElementsByTagName("SecretAccessKey")[0].textContent;
                 sessionToken = doc.getElementsByTagName("SessionToken")[0].textContent;
@@ -311,7 +311,7 @@ async function _uploadRecord(record) {
 
             attendanceDetail.selfie = selfieURL.data;
 
-            console.log('----', selfieURL);
+            // console.log('----', selfieURL);
         }
     }
 
@@ -387,7 +387,7 @@ async function _uploadRecord(record) {
             "registrationNumber": regId,
             "statusFlag": isTraineePresentInDB.trainee.length > 0 ? 1 : 2,
         }
-        console.log('traineeData', traineeData);
+        // console.log('traineeData', traineeData);
 
     } else { }
 
@@ -410,7 +410,7 @@ async function _uploadRecord(record) {
         });
     }, resultsPromise)
         .then(results => {
-            console.log('results of all batches submitted', results);
+            // console.log('results of all batches submitted', results);
 
             result = results[0];
         })
@@ -644,8 +644,8 @@ async function _uploadBatch(recordBatch, formData, attendanceDetail, traineeDeta
             });
     } else if (submissionId === "trainer") {
         const addTrainerUrl = `${HASURA_URL}/api/rest/addTrainer`;
-        console.log('addTrainerUrl', addTrainerUrl)
-        console.log('trainerData', trainerData)
+        // console.log('addTrainerUrl', addTrainerUrl)
+        // console.log('trainerData', trainerData)
         return fetch(addTrainerUrl, {
             method: 'POST',
             cache: 'no-cache',
@@ -656,7 +656,7 @@ async function _uploadBatch(recordBatch, formData, attendanceDetail, traineeDeta
             .then(async response => {
 
                 const resData = await response.json();
-                console.log('res data', resData);
+                // console.log('res data', resData);
                 /** @type { UploadBatchResult } */
                 let result = {
                     status: response.status,
@@ -701,7 +701,7 @@ async function _uploadBatch(recordBatch, formData, attendanceDetail, traineeDeta
             .then(async response => {
 
                 const resData = await response.json();
-                console.log('res data trainee data', resData);
+                // console.log('res data trainee data', resData);
                 /** @type { UploadBatchResult } */
                 let result = {
                     status: response.status,
@@ -829,7 +829,7 @@ function _prepareFormDataArray(record) {
     if (submissionFiles.length > 0) {
         batches = _divideIntoBatches(sizes, maxSize);
     }
-    console.log(`splitting record into ${batches.length} batches to reduce submission size `, batches);
+    // console.log(`splitting record into ${batches.length} batches to reduce submission size `, batches);
 
     batches.forEach(batch => {
         const fd = new FormData();

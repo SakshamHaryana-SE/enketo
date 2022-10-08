@@ -20,7 +20,7 @@ if ( cluster.isMaster ) {
     const server = app.listen( app.get( 'port' ), () => {
         const worker = ( cluster.worker ) ? cluster.worker.id : 'Master';
         const msg = 'Worker ' + worker + ' ready for duty at port ' + server.address().port + '! (environment: ' + app.get( 'env' ) + ')';
-        console.log( msg );
+        // console.log( msg );
     } );
     /**
      * The goal of this timeout is to time out AFTER the client (browser request) times out.
